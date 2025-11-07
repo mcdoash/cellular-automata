@@ -1,37 +1,57 @@
-/**
- * @todo cell set state fn
- */
+const Cell = class {
+  row;
+  col;
+  id;
+  state;
 
-const row_num = 10, col_num = 10;
-let CA = {};
-setupAutomata();
-setupElements();
-randomizeStates();
+  constructor(r, c, initState) {
+    this.row = r;
+    this.col = c;
+    this.id = this.row + '-' + this.col;
+    this.setState(initState);
+  }
 
-/**
- * Setup the cellular automata
- * @function setupAutomata
- */
-function setupAutomata() {
-  CA = {
-    cells: [],
-    states: ['on', 'off'],
-    symbols: [],
-    dimension: 2,
-    accepting: [],
-    quiescent: '',
-    boundary: '',
-    transitions: {},
-    neighbours: {}
-  };
+  setState(newState) {
+    this.state = newState;
+    $('#' + this.id).attr('class', newState);
+  }
+};
 
-  for (let r = 0; r < row_num; r++) {
-    CA.cells[r] = [];
-    for (let c = 0; c < col_num; c++) {
-      CA.cells[r][c] = CA.states[1];
+const CA = class {
+  cells = [];
+  states = [];
+  transitions = {};
+  neighbours = {};
+
+  constructor(states) {
+    this.states = states;
+
+    // Init cells
+    for (let r = 0; r < rowNum; r++) {
+      this.cells[r] = [];
+      for (let c = 0; c < colNum; c++) {
+        this.cells[r][c] = new Cell(r, c, this.states[1]);
+      }
     }
   }
-}
+
+  /**
+   * Randomize the state of every cell in the CA
+   */
+  randomizeStates() {
+    for (let r = 0; r < rowNum; r++) {
+      for (let c = 0; c < colNum; c++) {
+        const newState = Math.floor(Math.random() * this.states.length);
+        this.cells[r][c].setState(this.states[newState]);
+      }
+    }
+  }
+};
+
+const rowNum = 10, colNum = 10;
+let M = new CA(['on', 'off']);
+setupElements();
+M.randomizeStates();
 
 /**
  * Setup the html grid elements
@@ -40,71 +60,29 @@ function setupAutomata() {
 function setupElements() {
   // Setup the grid object
   const grid = $('#grid');
-  grid.css('grid-template-columns', (100 / col_num + '%').repeat(col_num));
-  grid.css('grid-template-rows', (100 / row_num + '%').repeat(row_num));
+  grid.css('grid-template-columns', (100 / colNum + '%').repeat(colNum));
+  grid.css('grid-template-rows', (100 / rowNum + '%').repeat(rowNum));
 
   // Init all grid cells
-  for (let r = 0; r < row_num; r++) {
-    for (let c = 0; c < col_num; c++) {
-      const cell = $('<div>').attr('id', getId(r, c));
+  for (let r = 0; r < rowNum; r++) {
+    for (let c = 0; c < colNum; c++) {
+      const id = M.cells[r][c].id;
+      const cell = $('<div>').attr('id', id);
+
+      // On click, toggle a cell on/off
+      $(cell).on('click', () => {
+        if (M.cells[r][c].state == M.states[0]) {
+          M.cells[r][c].setState(M.states[1]);
+        }
+        else {
+          M.cells[r][c].setState(M.states[0]);
+        }
+      });
+
       $(grid).append(cell);
     }
   }
 
-  // On click, toggle a cell on/off
-  $('#grid div').on('click', function () {
-    const [r, c] = getRowCol(this);
-
-    if (CA.cells[r][c] == CA.states[0]) {
-      CA.cells[r][c] = CA.states[1];
-    }
-    else {
-      CA.cells[r][c] = CA.states[0];
-    }
-    $(this).attr('class', CA.cells[r][c]);
-  });
-}
-
-/**
- * Randomize the state of every cell in the CA and set
- * the corresponding class in the grid cell
- * @function randomizeStates
- */
-function randomizeStates() {
-  for (let r = 0; r < row_num; r++) {
-    for (let c = 0; c < col_num; c++) {
-      const state = Math.floor(Math.random() * CA.states.length);
-      CA.cells[r][c] = CA.states[state];
-      setCellClass(r, c, CA.states[state]);
-    }
-  }
-}
-
-/**
- * @param {number} row   cell's row number
- * @param {number} col   cell's column number
- * @param {number} state the state to change class to
- */
-function setCellClass(row, col, state) {
-  const id = getId(row, col);
-  $('#' + id).attr('class', state);
-}
-
-/**
- * @param {number} row cell row number
- * @param {number} col cell col number
- * @returns {string} the new id of the element
- */
-function getId(row, col) {
-  return row + '-' + col;
-}
-
-/**
- * @param {HTMLElement} elem element to extract CA cell from
- * @returns {Array} the row and column numbers of the cell
- */
-function getRowCol(elem) {
-  const id = $(elem).attr('id');
-  const nums = id.split('-');
-  return [nums[0], nums[1]];
+  // Set randomize button
+  $('button#randomize').on('click', () => M.randomizeStates());
 }

@@ -8,7 +8,7 @@ const jsdoc = require('eslint-plugin-jsdoc');
 module.exports = defineConfig([
   jsdoc.configs['flat/recommended'],
   {
-    files: ['**/*.js'],
+    files: ['**/*.{js,jms}'],
     plugins: {
       js,
       '@stylistic': stylistic,
