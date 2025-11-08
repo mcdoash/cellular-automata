@@ -6,22 +6,24 @@
     <title>CA</title>
   </head>
   <body>
+    <!-- Create predetermined automata -->
     <div id="presets">
       <span>Preset Automata: </span>
       <button id="cave">Caves</button>
     </div>
 
+    <!-- Create a new cellular automata -->
     <div id="new-automata">
       <span>Create New Automata:</span>
 
       <form id="create-ca">
         <div class="form-input">
           <label for="rows">Number of rows:</label>
-          <input id="rows" name="rows" type="number" min="1" max="200" step="1" placeholder="100">
+          <input id="rows" name="rows" type="number" min="1" max="200" step="1" placeholder="100" required>
         </div>
         <div class="form-input">
           <label for="cols">Number of columns:</label>
-          <input id="cols" name="cols" type="number" min="1" max="100" step="1" placeholder="100">
+          <input id="cols" name="cols" type="number" min="1" max="100" step="1" placeholder="100" required>
         </div>
         <!--
         <div class="form-input">
@@ -32,30 +34,37 @@
         <fieldset class="form-input">
           <legend>Rules</legend>
           <div id="rule">
+
+            <!-- Check if neighbours are in this state -->
             <div class="form-input">
               <label for="start">Start state:</label>
-              <select id="start" name="start">
+              <select id="start" name="start" required>
                 <option disabled selected hidden value> -- </option>
                 <option value="on">On</option>
                 <option value="off">Off</option>
               </select>
             </div>
+
+            <!-- Number matching neighbours needed -->
             <div class="form-input">
               <label for="thresh">Threshold:</label>
-              <input id="thresh" name="thresh" type="number" min="0" max="9" step="1">
+              <input id="thresh" name="thresh" type="number" min="0" max="9" step="1" required>
             </div>
+
+            <!-- Change to this state if passed -->
             <div class="form-input">
               <label for="end">End state:</label>
-              <select id="end" name="end">
+              <select id="end" name="end" required>
                 <option disabled selected hidden value> -- </option>
                 <option value="on">On</option>
                 <option value="off">Off</option>
               </select>
             </div>
           </div>
-          <div id="rules-container">
 
-          </div>
+          <!-- List of all rules -->
+          <div id="rules-container"></div>
+
           <button id="add-rule" type="button">Add Rule</button>
         </fieldset>
 
@@ -64,10 +73,18 @@
     </div>
 
     <div id="automata">
-      <label for="prob">'On' probability: </label><input id="prob" type="number" min="0" max="1" step="0.01" value="0.4">
+      <!-- How often a randomized cell will be on -->
+      <label for="prob">'On' probability: </label><input id="prob" type="number" min="0" max="1" step="0.01" value="0.45">
+
+      <!-- Randomized all cell states -->
       <button id="randomize">Randomize</button>
+
+      <!-- Iterate over rules once -->
       <button id="iterate">Iterate</button>
+      <!-- Iterate over rules until no changes -->
       <button id="stabilize">Stabilize</button>
+
+      <!-- Set grid gap visibility -->
       <label for="gap">Show grid lines: </label>
       <input id="gap" name="gap" type="checkbox">
 

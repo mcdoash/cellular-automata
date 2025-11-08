@@ -62,7 +62,7 @@ const CA = class {
    * @function CA#randomizeStates
    * @param {number} onProb probability of a state being 'on'
    */
-  randomizeStates(onProb = 0.4) {
+  randomizeStates(onProb = 0.45) {
     for (let r = 0; r < this.rowNum; r++) {
       for (let c = 0; c < this.colNum; c++) {
         const prob = Math.random(); // [0-1]
@@ -79,7 +79,7 @@ const CA = class {
   /**
    * Apply rules
    * @function iterate
-   * @returns if the iterations created a change in state
+   * @returns {boolean} if the iteration created a change in state
    */
   iterate() {
     let changedCells = [];
@@ -89,7 +89,7 @@ const CA = class {
       row.forEach((cell) => {
         // Iterate over all rules
         this.rules.forEach((rule) => {
-          // If enough neighboura are at the rule's start state, cell will have rule's end state
+          // If enough neighbours are at the rule's start state, cell will have rule's end state
           if (cell.numNeighAt(rule.startState) >= rule.threshold && cell.state != rule.endState) {
             changedCells.push({
               cell: cell,
@@ -107,8 +107,9 @@ const CA = class {
   }
 
   /**
-   * Iterate until stable
+   * Iterate until stable -- when no states have changed
    * @function stabilize
+   * @todo only change cell class once?
    */
   stabilize() {
     let iterations = 0;
@@ -120,7 +121,7 @@ const CA = class {
     }
 
     if (!change) {
-      alert('Stabilized in ' + iterations + ' iterations');
+      alert('Stabilized in ' + (iterations - 1) + ' iterations');
     }
     else {
       alert('Failed to stabilize after ' + iterations + ' iterations');
