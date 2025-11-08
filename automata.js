@@ -68,19 +68,24 @@ const CA = class {
 
   /**
    * Randomize the state of every cell in the CA
+   * @param {number} onProb probability of a state being 'on'
    */
-  randomizeStates() {
+  randomizeStates(onProb = 0.4) {
     for (let r = 0; r < rowNum; r++) {
       for (let c = 0; c < colNum; c++) {
-        let newState = Math.floor(Math.random() * (this.states.length + 1));
-        if (newState >= this.states.length) newState = 1;
-        this.cells[r][c].setState(this.states[newState]);
+        const prob = Math.random(); // [0-1]
+        if (prob <= onProb) {
+          this.cells[r][c].setState('on');
+        }
+        else {
+          this.cells[r][c].setState('off');
+        }
       }
     }
   }
 };
 
-const rowNum = 30, colNum = 30;
+const rowNum = 100, colNum = 100;
 let M = new CA(['on', 'off']);
 setupElements();
 M.randomizeStates();
@@ -117,28 +122,35 @@ function setupElements() {
 
   // Set randomize button
   $('button#randomize').on('click', () => {
-    M.randomizeStates();
-    // setTimeout(test, 5000);
+    const probability = $('#prob').val();
+    M.randomizeStates(probability);
   });
   $('button#iterate').on('click', () => {
-    iterate();
+    const threshold = $('#thresh').val();
+    iterate(threshold);
   });
 }
 
 /**
  *
+ * @param {number} threshold the number of neighbours that must be on for a cell to also turn on
  */
-function iterate() {
+function iterate(threshold = 4) {
+  let onCells = [];
+  let offCells = [];
+
   for (let r = 0; r < rowNum; r++) {
     for (let c = 0; c < colNum; c++) {
-      if (M.cells[r][c].numNeighAt('on') >= 4) {
-        // change = true;
-        M.cells[r][c].setState('on');
+      const numOn = M.cells[r][c].numNeighAt('on');
+
+      if (numOn >= threshold) {
+        onCells.push(M.cells[r][c]);
       }
       else if (M.cells[r][c].state == 'on') {
-        // change = true;
-        M.cells[r][c].setState('off');
+        offCells.push(M.cells[r][c]);
       }
     }
-  } // only change after iteration
+  }
+  onCells.forEach(cell => cell.setState('on'));
+  offCells.forEach(cell => cell.setState('off'));
 }
