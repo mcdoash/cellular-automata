@@ -78,7 +78,7 @@ const CA = class {
 
   /**
    * Apply rules
-   * @function iterate
+   * @function CA#iterate
    * @returns {boolean} if the iteration created a change in state
    */
   iterate() {
@@ -108,7 +108,7 @@ const CA = class {
 
   /**
    * Iterate until stable -- when no states have changed
-   * @function stabilize
+   * @function CA#stabilize
    * @todo only change cell class once?
    */
   stabilize() {

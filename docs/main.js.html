@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cellular Automata main.js</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">Cellular Automata</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                 
+                    
+                        <a
+                            class="link user-link "
+                            href=""
+                        >
+                            
+                        </a>
+                    
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+                <div class="search-wrapper">
+                    <input id="search" type="text" placeholder="Search docs..." class="input">
+                </div>
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li><li><a href="Cell.html">Cell</a></li></ul><h3>Global</h3><ul><li><a href="global.html#caveAutomata">caveAutomata</a></li><li><a href="global.html#setBoundaryWalls">setBoundaryWalls</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupElements">setupElements</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>main.js</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import './style.scss'; // Stylesheet
+import { CA } from './automata.mjs'; // Automata classes
+
+// Global automata variables
+let M;
+let automataType;
+setup();
+
+/**
+ * Setup DOM elements needed at start
+ * @function setup
+ */
+function setup() {
+  // Automata presets
+  $('button#cave').on('click', () => caveAutomata());
+
+  // Set randomize button
+  $('button#randomize').on('click', () => {
+    const probability = $('#prob').val();
+    M.randomizeStates(probability);
+
+    if (automataType == 'cave') {
+      setBoundaryWalls();
+    }
+  });
+  // Set iterate &amp; stabilize buttons
+  $('button#iterate').on('click', () => M.iterate());
+  $('button#stabilize').on('click', () => M.stabilize());
+
+  // Turn grid lines on/off via checkbox
+  $('input#gap').on('change', function () {
+    $('#grid').css('gap', this.checked ? 1 : 0 + 'px');
+  });
+
+  // New automata form
+  $('#create-ca').on('submit', function (e) {
+    const rowNum = e.target.rows.value;
+    const colNum = e.target.cols.value;
+
+    // const states = e.target.states.value.split(',').map(i => i.trim());
+    const states = ['on', 'off'];
+
+    // Create rules from input
+    let rules = [];
+    $('.rule').each(function () {
+      const id = $(this).attr('id').split('-')[1];
+
+      const start = $('#start-' + id).val();
+      const thresh = $('#thresh-' + id).val();
+      const end = $('#end-' + id).val();
+
+      rules.push({
+        startState: start,
+        threshold: thresh,
+        endState: end
+      });
+    });
+
+    M = new CA(rowNum, colNum, states, rules);
+    setupGrid();
+    M.randomizeStates();
+
+    return false;
+  });
+
+  // Form: new rules creation
+  /** @todo better rules creation */
+  let numRules = 0;
+  // Set rule template and remove from DOM
+  const ruleTemp = $('#rule').clone();
+  $('#rule').remove();
+
+  $('button#add-rule').on('click', () => {
+    // Create new rules input elements
+    const newRule = ruleTemp.clone().addClass('rule');
+    newRule.attr('id', 'rule-' + numRules);
+
+    // Set ids of elements to current rule number
+    newRule.find('#start').first().attr('id', 'start-' + numRules);
+    newRule.find('#thresh').first().attr('id', 'thresh-' + numRules);
+    newRule.find('#end').first().attr('id', 'end-' + numRules);
+
+    // Set delete button to delete this rule
+    const deleteBtn = $('&lt;button>').attr('id', 'delete-' + numRules).text('Delete Rule').on('click', () =>
+      $('#' + newRule.attr('id')).remove()
+    );
+    $(newRule).append(deleteBtn);
+
+    $('#rules-container').append(newRule);
+    numRules++;
+  });
+}
+
+/**
+ * Setup the html grid elements
+ * @function setupElements
+ */
+function setupGrid() {
+  // Setup empty grid element
+  const grid = $('#grid').empty();
+  grid.css('grid-template-columns', (100 / M.colNum + 'fr ').repeat(M.colNum));
+  grid.css('grid-template-rows', (100 / M.rowNum + 'fr ').repeat(M.rowNum));
+
+  // Init all grid cells
+  for (let r = 0; r &lt; M.rowNum; r++) {
+    for (let c = 0; c &lt; M.colNum; c++) {
+      const id = M.cells[r][c].id;
+      const cell = $('&lt;div>').attr('id', id);
+      $(grid).append(cell);
+
+      // On click, toggle a cell on/off
+      $(cell).on('click', () => {
+        let newState = M.cells[r][c].state == 'on' ? 'off' : 'on';
+        M.cells[r][c].setState(newState);
+      });
+    }
+  }
+
+  $('#automata').show();
+}
+
+/** AUTOMATA PRESETS */
+/**
+ * Create a cellular automata that generates cave-like structures
+ * @function caveAutomata
+ */
+function caveAutomata() {
+  automataType = 'cave';
+  const rowNum = 100, colNum = 100;
+  const states = ['on', 'off'];
+
+  const onRule = {
+    startState: 'on',
+    threshold: 5,
+    endState: 'on'
+  };
+  const offRule = {
+    startState: 'off',
+    threshold: 6,
+    endState: 'off'
+  };
+
+  M = new CA(rowNum, colNum, states, [onRule, offRule]);
+  setupGrid();
+  M.randomizeStates(0.45);
+  // Set all boundaries to "walls"
+  setBoundaryWalls();
+}
+
+/**
+ * Turn every cell at a boundary off to similate walls on a map
+ * @function setBoundaryWalls
+ */
+function setBoundaryWalls() {
+  M.cells.forEach((row) => {
+    row.forEach((cell) => {
+      if (cell.row == 0 || cell.row == (M.rowNum - 1) || cell.col == 0 || cell.col == (M.colNum - 1)) {
+        cell.setState('off');
+      }
+    });
+  });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+<script src="scripts/search.js"> </script>
+
+
+</body>
+</html>

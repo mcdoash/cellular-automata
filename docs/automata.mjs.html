@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cellular Automata automata.mjs</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">Cellular Automata</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                 
+                    
+                        <a
+                            class="link user-link "
+                            href=""
+                        >
+                            
+                        </a>
+                    
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+                <div class="search-wrapper">
+                    <input id="search" type="text" placeholder="Search docs..." class="input">
+                </div>
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li><li><a href="Cell.html">Cell</a></li></ul><h3>Global</h3><ul><li><a href="global.html#caveAutomata">caveAutomata</a></li><li><a href="global.html#setBoundaryWalls">setBoundaryWalls</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupElements">setupElements</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>automata.mjs</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Class representing a cellular automata
+ * @class
+ * @property {Array} cells a 2D array of cells
+ * @property {Array} states a finite set of states
+ * @property {object} transitions cell state transition rules
+ */
+const CA = class {
+  rowNum;
+  colNum;
+  cells = [];
+  states = [];
+  transitions = {};
+
+  /**
+   * @constructs CA
+   * @param {number} rows number of rows
+   * @param {number} cols number of columns
+   * @param {Array} states set of CA states
+   * @param {Array} rules set of rules
+   */
+  constructor(rows, cols, states, rules) {
+    this.rowNum = rows;
+    this.colNum = cols;
+    this.states = states;
+    this.rules = rules;
+
+    // Init cells
+    for (let r = 0; r &lt; this.rowNum; r++) {
+      this.cells[r] = [];
+      for (let c = 0; c &lt; this.colNum; c++) {
+        this.cells[r][c] = new Cell(r, c, this.states[0]);
+      }
+    }
+    this.calcNeighbours();
+  }
+
+  /**
+   * Calculate and assign the neighbours of each cell
+   * @function CA#calcNeighbours
+   * @todo more efficient method
+   */
+  calcNeighbours() {
+    for (let row = 0; row &lt; this.rowNum; row++) {
+      for (let col = 0; col &lt; this.colNum; col++) {
+        let neighbours = [this];
+
+        for (let i = row - 1; i &lt;= row + 1; i++) {
+          for (let j = col - 1; j &lt;= col + 1; j++) {
+            if ((i != row || j != col) &amp;&amp; i >= 0 &amp;&amp; i &lt; this.rowNum &amp;&amp; j >= 0 &amp;&amp; j &lt; this.colNum) {
+              neighbours.push(this.cells[i][j]);
+            }
+          }
+        }
+        this.cells[row][col].neighbours = neighbours;
+      }
+    }
+  }
+
+  /**
+   * Randomize the state of every cell in the CA
+   * @function CA#randomizeStates
+   * @param {number} onProb probability of a state being 'on'
+   */
+  randomizeStates(onProb = 0.45) {
+    for (let r = 0; r &lt; this.rowNum; r++) {
+      for (let c = 0; c &lt; this.colNum; c++) {
+        const prob = Math.random(); // [0-1]
+        if (prob &lt;= onProb) {
+          this.cells[r][c].setState('on');
+        }
+        else {
+          this.cells[r][c].setState('off');
+        }
+      }
+    }
+  }
+
+  /**
+   * Apply rules
+   * @function CA#iterate
+   * @returns {boolean} if the iteration created a change in state
+   */
+  iterate() {
+    let changedCells = [];
+
+    // Iterate over all cells
+    this.cells.forEach((row) => {
+      row.forEach((cell) => {
+        // Iterate over all rules
+        this.rules.forEach((rule) => {
+          // If enough neighbours are at the rule's start state, cell will have rule's end state
+          if (cell.numNeighAt(rule.startState) >= rule.threshold &amp;&amp; cell.state != rule.endState) {
+            changedCells.push({
+              cell: cell,
+              state: rule.endState
+            });
+          }
+        });
+      });
+    });
+
+    // Actually change states after iteration
+    changedCells.forEach(change => change.cell.setState(change.state));
+
+    return changedCells.length != 0;
+  }
+
+  /**
+   * Iterate until stable -- when no states have changed
+   * @function CA#stabilize
+   * @todo only change cell class once?
+   */
+  stabilize() {
+    let iterations = 0;
+    let change = true;
+
+    while (change &amp;&amp; iterations &lt; 100) {
+      change = this.iterate();
+      iterations++;
+    }
+
+    if (!change) {
+      alert('Stabilized in ' + (iterations - 1) + ' iterations');
+    }
+    else {
+      alert('Failed to stabilize after ' + iterations + ' iterations');
+    }
+  }
+};
+
+/**
+ * Class representing a cell in a CA
+ * @class
+ * @property {number} row the row position of a cell
+ * @property {number} col the column position of a cell
+ * @property {string} id the matching grid cell's id
+ * @property {string} state the cell's current state
+ * @property {Array} neighbours list of the cell's neighbours
+ */
+const Cell = class {
+  row;
+  col;
+  id;
+  state;
+  neighbours;
+
+  /**
+   * @constructs CA
+   * @param {number} r the row position
+   * @param {number} c the column position
+   * @param {string} initState the initial state
+   */
+  constructor(r, c, initState) {
+    this.row = r;
+    this.col = c;
+    this.id = this.row + '-' + this.col;
+    this.setState(initState);
+  }
+
+  /**
+   * Set the cell's state and update the matching grid cell
+   * @function Cell#setState
+   * @param {string} newState the state to change to
+   */
+  setState(newState) {
+    this.state = newState;
+    $('#' + this.id).attr('class', newState);
+  }
+
+  /**
+   * Get the number of the cell's neighbours at a given state
+   * @function Cell#numNeighAt
+   * @param {string} state the state to check
+   * @returns {number} the number of neighbours at given state
+   */
+  numNeighAt(state) {
+    return this.neighbours.reduce((a, c) => a + (c.state == state ? 1 : 0), 0);
+  }
+};
+
+export { CA };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+<script src="scripts/search.js"> </script>
+
+
+</body>
+</html>

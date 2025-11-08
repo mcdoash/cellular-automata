@@ -4,26 +4,28 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>CA</title>
-    <script type="module" crossorigin>var g=Object.defineProperty;var w=(e,t,s)=>t in e?g(e,t,{enumerable:!0,configurable:!0,writable:!0,value:s}):e[t]=s;var c=(e,t,s)=>w(e,typeof t!="symbol"?t+"":t,s);(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))r(o);new MutationObserver(o=>{for(const l of o)if(l.type==="childList")for(const n of l.addedNodes)n.tagName==="LINK"&&n.rel==="modulepreload"&&r(n)}).observe(document,{childList:!0,subtree:!0});function s(o){const l={};return o.integrity&&(l.integrity=o.integrity),o.referrerPolicy&&(l.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?l.credentials="include":o.crossOrigin==="anonymous"?l.credentials="omit":l.credentials="same-origin",l}function r(o){if(o.ep)return;o.ep=!0;const l=s(o);fetch(o.href,l)}})();const d=class{constructor(e,t,s,r){c(this,"rowNum");c(this,"colNum");c(this,"cells",[]);c(this,"states",[]);c(this,"transitions",{});this.rowNum=e,this.colNum=t,this.states=s,this.rules=r;for(let o=0;o<this.rowNum;o++){this.cells[o]=[];for(let l=0;l<this.colNum;l++)this.cells[o][l]=new b(o,l,this.states[0])}this.calcNeighbours()}calcNeighbours(){for(let e=0;e<this.rowNum;e++)for(let t=0;t<this.colNum;t++){let s=[this];for(let r=e-1;r<=e+1;r++)for(let o=t-1;o<=t+1;o++)(r!=e||o!=t)&&r>=0&&r<this.rowNum&&o>=0&&o<this.colNum&&s.push(this.cells[r][o]);this.cells[e][t].neighbours=s}}randomizeStates(e=.4){for(let t=0;t<this.rowNum;t++)for(let s=0;s<this.colNum;s++)Math.random()<=e?this.cells[t][s].setState("on"):this.cells[t][s].setState("off")}iterate(){let e=[];this.cells.forEach(t=>{t.forEach(s=>{this.rules.forEach(r=>{s.numNeighAt(r.startState)>=r.threshold&&e.push({cell:s,state:r.endState})})})}),e.forEach(t=>t.cell.setState(t.state))}},b=class{constructor(e,t,s){c(this,"row");c(this,"col");c(this,"id");c(this,"state");c(this,"neighbours");this.row=e,this.col=t,this.id=this.row+"-"+this.col,this.setState(s)}setState(e){this.state=e,$("#"+this.id).attr("class",e)}numNeighAt(e){return this.neighbours.reduce((t,s)=>t+(s.state==e?1:0),0)}};let i,m;S();$("button#cave").on("click",()=>v());function S(){let e=0;$("button#add-rule").on("click",()=>{const t=$("#rule").clone().addClass("rule");t.attr("id","rule-"+e),t.find("#start").first().attr("id","start-"+e),t.find("#thresh").first().attr("id","thresh-"+e),t.find("#end").first().attr("id","end-"+e);const s=$("<button>").attr("id","delete-"+e).text("Delete Rule").on("click",()=>$("#"+t.attr("id")).remove());$(t).append(s),$("#rules-container").append(t),e++}),$("input#gap").on("change",function(){$("#grid").css("gap",this.checked?2:"0px")}),$("#create-ca").on("submit",function(t){console.log("submit");let s=!0;const r=t.target.rows.value,o=t.target.cols.value,l=["on","off"];let n=[];return $(".rule").each(function(){const a=$(this).attr("id").split("-")[1],u=$("#start-"+a).val(),f=$("#thresh-"+a).val(),h=$("#end-"+a).val();if(!u||!f||!h)return alert("Invalid rule"),s=!1,!1;n.push({startState:u,threshold:f,endState:h})}),s&&(i=new d(r,o,l,n),p(),i.randomizeStates()),!1})}function p(){const e=$("#grid").empty();e.css("grid-template-columns",(100/i.colNum+"fr ").repeat(i.colNum)),e.css("grid-template-rows",(100/i.rowNum+"fr ").repeat(i.rowNum));for(let t=0;t<i.rowNum;t++)for(let s=0;s<i.colNum;s++){const r=i.cells[t][s].id,o=$("<div>").attr("id",r);$(e).append(o),$(o).on("click",()=>{i.cells[t][s].state=="on"?i.cells[t][s].setState("off"):i.cells[t][s].setState("on")})}$("button#randomize").on("click",()=>{const t=$("#prob").val();i.randomizeStates(t),m=="cave"&&N()}),$("button#iterate").on("click",()=>{$("#thresh").val(),i.iterate()}),$("#automata").show()}function v(){m="cave";const e=100,t=100,s=["on","off"],r={startState:"on",threshold:5,endState:"on"},o={startState:"off",threshold:6,endState:"off"};i=new d(e,t,s,[r,o]),p(),i.randomizeStates(.45),N()}function N(){i.cells.forEach(e=>{e.forEach(t=>{(t.row==0||t.row==i.rowNum-1||t.col==0||t.col==i.colNum-1)&&t.setState("off")})})}</script>
+    <script type="module" crossorigin>var g=Object.defineProperty;var w=(e,t,s)=>t in e?g(e,t,{enumerable:!0,configurable:!0,writable:!0,value:s}):e[t]=s;var n=(e,t,s)=>w(e,typeof t!="symbol"?t+"":t,s);(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))r(o);new MutationObserver(o=>{for(const i of o)if(i.type==="childList")for(const a of i.addedNodes)a.tagName==="LINK"&&a.rel==="modulepreload"&&r(a)}).observe(document,{childList:!0,subtree:!0});function s(o){const i={};return o.integrity&&(i.integrity=o.integrity),o.referrerPolicy&&(i.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?i.credentials="include":o.crossOrigin==="anonymous"?i.credentials="omit":i.credentials="same-origin",i}function r(o){if(o.ep)return;o.ep=!0;const i=s(o);fetch(o.href,i)}})();const u=class{constructor(e,t,s,r){n(this,"rowNum");n(this,"colNum");n(this,"cells",[]);n(this,"states",[]);n(this,"transitions",{});this.rowNum=e,this.colNum=t,this.states=s,this.rules=r;for(let o=0;o<this.rowNum;o++){this.cells[o]=[];for(let i=0;i<this.colNum;i++)this.cells[o][i]=new b(o,i,this.states[0])}this.calcNeighbours()}calcNeighbours(){for(let e=0;e<this.rowNum;e++)for(let t=0;t<this.colNum;t++){let s=[this];for(let r=e-1;r<=e+1;r++)for(let o=t-1;o<=t+1;o++)(r!=e||o!=t)&&r>=0&&r<this.rowNum&&o>=0&&o<this.colNum&&s.push(this.cells[r][o]);this.cells[e][t].neighbours=s}}randomizeStates(e=.45){for(let t=0;t<this.rowNum;t++)for(let s=0;s<this.colNum;s++)Math.random()<=e?this.cells[t][s].setState("on"):this.cells[t][s].setState("off")}iterate(){let e=[];return this.cells.forEach(t=>{t.forEach(s=>{this.rules.forEach(r=>{s.numNeighAt(r.startState)>=r.threshold&&s.state!=r.endState&&e.push({cell:s,state:r.endState})})})}),e.forEach(t=>t.cell.setState(t.state)),e.length!=0}stabilize(){let e=0,t=!0;for(;t&&e<100;)t=this.iterate(),e++;alert(t?"Failed to stabilize after "+e+" iterations":"Stabilized in "+(e-1)+" iterations")}},b=class{constructor(e,t,s){n(this,"row");n(this,"col");n(this,"id");n(this,"state");n(this,"neighbours");this.row=e,this.col=t,this.id=this.row+"-"+this.col,this.setState(s)}setState(e){this.state=e,$("#"+this.id).attr("class",e)}numNeighAt(e){return this.neighbours.reduce((t,s)=>t+(s.state==e?1:0),0)}};let l,h;S();function S(){$("button#cave").on("click",()=>v()),$("button#randomize").on("click",()=>{const s=$("#prob").val();l.randomizeStates(s),h=="cave"&&f()}),$("button#iterate").on("click",()=>l.iterate()),$("button#stabilize").on("click",()=>l.stabilize()),$("input#gap").on("change",function(){$("#grid").css("gap",this.checked?1:"0px")}),$("#create-ca").on("submit",function(s){const r=s.target.rows.value,o=s.target.cols.value,i=["on","off"];let a=[];return $(".rule").each(function(){const c=$(this).attr("id").split("-")[1],m=$("#start-"+c).val(),p=$("#thresh-"+c).val(),N=$("#end-"+c).val();a.push({startState:m,threshold:p,endState:N})}),l=new u(r,o,i,a),d(),l.randomizeStates(),!1});let e=0;const t=$("#rule").clone();$("#rule").remove(),$("button#add-rule").on("click",()=>{const s=t.clone().addClass("rule");s.attr("id","rule-"+e),s.find("#start").first().attr("id","start-"+e),s.find("#thresh").first().attr("id","thresh-"+e),s.find("#end").first().attr("id","end-"+e);const r=$("<button>").attr("id","delete-"+e).text("Delete Rule").on("click",()=>$("#"+s.attr("id")).remove());$(s).append(r),$("#rules-container").append(s),e++})}function d(){const e=$("#grid").empty();e.css("grid-template-columns",(100/l.colNum+"fr ").repeat(l.colNum)),e.css("grid-template-rows",(100/l.rowNum+"fr ").repeat(l.rowNum));for(let t=0;t<l.rowNum;t++)for(let s=0;s<l.colNum;s++){const r=l.cells[t][s].id,o=$("<div>").attr("id",r);$(e).append(o),$(o).on("click",()=>{let i=l.cells[t][s].state=="on"?"off":"on";l.cells[t][s].setState(i)})}$("#automata").show()}function v(){h="cave";const e=100,t=100,s=["on","off"],r={startState:"on",threshold:5,endState:"on"},o={startState:"off",threshold:6,endState:"off"};l=new u(e,t,s,[r,o]),d(),l.randomizeStates(.45),f()}function f(){l.cells.forEach(e=>{e.forEach(t=>{(t.row==0||t.row==l.rowNum-1||t.col==0||t.col==l.colNum-1)&&t.setState("off")})})}</script>
     <style rel="stylesheet" crossorigin>body{font-size:1.75rem;color:#fff;background-color:#787878}#presets{margin-bottom:2%;float:left}#presets button{display:block;margin-top:15px}#new-automata{float:right}#new-automata form#create-ca{width:fit-content;margin:2% 0;padding:20px;color:#000;background-color:#d9d9d9}#new-automata form#create-ca .form-input{margin-bottom:5px}#new-automata form#create-ca label{margin-right:1rem}#new-automata form#create-ca input:not([type=submit]),#new-automata form#create-ca select{float:right}#new-automata form#create-ca fieldset{width:80%;margin-top:15px}#new-automata form#create-ca fieldset legend{font-weight:700}#new-automata form#create-ca #rule{display:none}#new-automata form#create-ca .rule{margin-bottom:15px;padding:10px;background-color:#ffffff80}#automata{display:none;clear:both}#automata #grid{width:95vh;height:95vh;padding:10px;display:grid}#automata #grid div.off{background-color:#000}#automata #grid div.on{background-color:#fff}</style>
   </head>
   <body>
+    <!-- Create predetermined automata -->
     <div id="presets">
       <span>Preset Automata: </span>
       <button id="cave">Caves</button>
     </div>
 
+    <!-- Create a new cellular automata -->
     <div id="new-automata">
       <span>Create New Automata:</span>
 
       <form id="create-ca">
         <div class="form-input">
           <label for="rows">Number of rows:</label>
-          <input id="rows" name="rows" type="number" min="1" max="200" step="1" placeholder="100">
+          <input id="rows" name="rows" type="number" min="1" max="200" step="1" placeholder="100" required>
         </div>
         <div class="form-input">
           <label for="cols">Number of columns:</label>
-          <input id="cols" name="cols" type="number" min="1" max="100" step="1" placeholder="100">
+          <input id="cols" name="cols" type="number" min="1" max="100" step="1" placeholder="100" required>
         </div>
         <!--
         <div class="form-input">
@@ -34,30 +36,37 @@
         <fieldset class="form-input">
           <legend>Rules</legend>
           <div id="rule">
+
+            <!-- Check if neighbours are in this state -->
             <div class="form-input">
               <label for="start">Start state:</label>
-              <select id="start" name="start">
+              <select id="start" name="start" required>
                 <option disabled selected hidden value> -- </option>
                 <option value="on">On</option>
                 <option value="off">Off</option>
               </select>
             </div>
+
+            <!-- Number matching neighbours needed -->
             <div class="form-input">
               <label for="thresh">Threshold:</label>
-              <input id="thresh" name="thresh" type="number" min="0" max="9" step="1">
+              <input id="thresh" name="thresh" type="number" min="0" max="9" step="1" required>
             </div>
+
+            <!-- Change to this state if passed -->
             <div class="form-input">
               <label for="end">End state:</label>
-              <select id="end" name="end">
+              <select id="end" name="end" required>
                 <option disabled selected hidden value> -- </option>
                 <option value="on">On</option>
                 <option value="off">Off</option>
               </select>
             </div>
           </div>
-          <div id="rules-container">
 
-          </div>
+          <!-- List of all rules -->
+          <div id="rules-container"></div>
+
           <button id="add-rule" type="button">Add Rule</button>
         </fieldset>
 
@@ -66,9 +75,18 @@
     </div>
 
     <div id="automata">
-      <label for="prob">'On' probability: </label><input id="prob" type="number" min="0" max="1" step="0.01" value="0.4">
+      <!-- How often a randomized cell will be on -->
+      <label for="prob">'On' probability: </label><input id="prob" type="number" min="0" max="1" step="0.01" value="0.45">
+
+      <!-- Randomized all cell states -->
       <button id="randomize">Randomize</button>
+
+      <!-- Iterate over rules once -->
       <button id="iterate">Iterate</button>
+      <!-- Iterate over rules until no changes -->
+      <button id="stabilize">Stabilize</button>
+
+      <!-- Set grid gap visibility -->
       <label for="gap">Show grid lines: </label>
       <input id="gap" name="gap" type="checkbox">
 
