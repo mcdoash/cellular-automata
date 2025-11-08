@@ -25,7 +25,17 @@ module.exports = defineConfig([
     rules: {
       'no-unused-vars': 'warn',
       '@stylistic/semi': ['error', 'always'],
-      '@stylistic/comma-dangle': ['error', 'never']
+      '@stylistic/comma-dangle': ['error', 'never'],
+      '@stylistic/lines-between-class-members': [
+        'warn',
+        {
+          enforce: [
+            { blankLine: 'never', prev: 'field', next: 'field' }
+          ]
+        },
+        { exceptAfterOverload: true }
+      ],
+      'class-methods-use-this': 'warn'
     }
   }
 ]);
