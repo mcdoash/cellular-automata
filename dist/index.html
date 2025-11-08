@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CA</title>
+    <script type="module" crossorigin>var f=Object.defineProperty;var h=(s,t,o)=>t in s?f(s,t,{enumerable:!0,configurable:!0,writable:!0,value:o}):s[t]=o;var l=(s,t,o)=>h(s,typeof t!="symbol"?t+"":t,o);(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const e of document.querySelectorAll('link[rel="modulepreload"]'))r(e);new MutationObserver(e=>{for(const i of e)if(i.type==="childList")for(const u of i.addedNodes)u.tagName==="LINK"&&u.rel==="modulepreload"&&r(u)}).observe(document,{childList:!0,subtree:!0});function o(e){const i={};return e.integrity&&(i.integrity=e.integrity),e.referrerPolicy&&(i.referrerPolicy=e.referrerPolicy),e.crossOrigin==="use-credentials"?i.credentials="include":e.crossOrigin==="anonymous"?i.credentials="omit":i.credentials="same-origin",i}function r(e){if(e.ep)return;e.ep=!0;const i=o(e);fetch(e.href,i)}})();const d=class{constructor(s,t,o){l(this,"rowNum");l(this,"colNum");l(this,"cells",[]);l(this,"states",[]);l(this,"transitions",{});this.rowNum=s,this.colNum=t,this.states=o;for(let r=0;r<this.rowNum;r++){this.cells[r]=[];for(let e=0;e<this.colNum;e++)this.cells[r][e]=new m(r,e,this.states[0])}this.calcNeighbours()}calcNeighbours(){for(let s=0;s<this.rowNum;s++)for(let t=0;t<this.colNum;t++){let o=[this];for(let r=s-1;r<=s+1;r++)for(let e=t-1;e<=t+1;e++)(r!=s||e!=t)&&r>=0&&r<this.rowNum&&e>=0&&e<this.colNum&&o.push(this.cells[r][e]);this.cells[s][t].neighbours=o}}randomizeStates(s=.4){for(let t=0;t<this.rowNum;t++)for(let o=0;o<this.colNum;o++)Math.random()<=s?this.cells[t][o].setState("on"):this.cells[t][o].setState("off")}},m=class{constructor(s,t,o){l(this,"row");l(this,"col");l(this,"id");l(this,"state");l(this,"neighbours");this.row=s,this.col=t,this.id=this.row+"-"+this.col,this.setState(o)}setState(s){this.state=s,$("#"+this.id).attr("class",s)}numNeighAt(s){return this.neighbours.reduce((t,o)=>t+(o.state==s?1:0),0)}},n=100,a=100;let c=new d(n,a,["on","off"]);p();c.randomizeStates();function p(){const s=$("#grid");s.css("grid-template-columns",(100/a+"%").repeat(a)),s.css("grid-template-rows",(100/n+"%").repeat(n));for(let t=0;t<n;t++)for(let o=0;o<a;o++){const r=c.cells[t][o].id,e=$("<div>").attr("id",r);$(s).append(e),$(e).on("click",()=>{c.cells[t][o].state=="on"?c.cells[t][o].setState("off"):c.cells[t][o].setState("on")})}$("button#randomize").on("click",()=>{const t=$("#prob").val();c.randomizeStates(t)}),$("button#iterate").on("click",()=>{const t=$("#thresh").val();N(t)})}function N(s=4){let t=[],o=[];c.cells.forEach(r=>{r.forEach(e=>{e.numNeighAt("on")>=s?t.push(e):e.state=="on"&&o.push(e)})}),t.forEach(r=>r.setState("on")),o.forEach(r=>r.setState("off"))}</script>
+    <style rel="stylesheet" crossorigin>body{font-size:1.75rem;color:#fff;background-color:#787878}#grid{width:75vh;height:75vh;padding:10px;display:grid;gap:2px}#grid div.off{background-color:#000}#grid div.on{background-color:#fff}</style>
+  </head>
+  <body>
+    <label for="prob">'On' probability: </label><input id="prob" type="number" min="0" max="1" step="0.01" value="0.4">
+    <button id="randomize">Randomize</button>
+    <label for="thresh">Threshold: </label><input id="thresh" type="number" min="0" max="9" step="1" value="4">
+    <button id="iterate">Iterate</button>
+    <div id="grid"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </body>
+</html>

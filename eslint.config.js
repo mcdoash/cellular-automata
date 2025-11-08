@@ -8,7 +8,7 @@ const jsdoc = require('eslint-plugin-jsdoc');
 module.exports = defineConfig([
   jsdoc.configs['flat/recommended'],
   {
-    files: ['**/*.{js,jms}'],
+    files: ['**/*.{js,mjs}'],
     plugins: {
       js,
       '@stylistic': stylistic,
@@ -16,11 +16,13 @@ module.exports = defineConfig([
     },
     extends: ['js/recommended', stylistic.configs.recommended],
     languageOptions: {
-      sourceType: 'script',
+      sourceType: 'module',
       globals: {
         ...globals.browser,
         ...globals.jquery,
-        ...globals.commonjs }
+        ...globals.commonjs,
+        ...globals.node
+      }
     },
     rules: {
       'no-unused-vars': 'warn',

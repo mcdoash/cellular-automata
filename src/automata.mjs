@@ -6,21 +6,27 @@
  * @property {object} transitions cell state transition rules
  */
 const CA = class {
+  rowNum;
+  colNum;
   cells = [];
   states = [];
   transitions = {};
 
   /**
    * @constructs CA
+   * @param {number} rows number of rows
+   * @param {number} cols number of columns
    * @param {Array} states set of CA states
    */
-  constructor(states) {
+  constructor(rows, cols, states) {
+    this.rowNum = rows;
+    this.colNum = cols;
     this.states = states;
 
     // Init cells
-    for (let r = 0; r < rowNum; r++) {
+    for (let r = 0; r < this.rowNum; r++) {
       this.cells[r] = [];
-      for (let c = 0; c < colNum; c++) {
+      for (let c = 0; c < this.colNum; c++) {
         this.cells[r][c] = new Cell(r, c, this.states[0]);
       }
     }
@@ -33,13 +39,13 @@ const CA = class {
    * @todo more efficient method
    */
   calcNeighbours() {
-    for (let row = 0; row < rowNum; row++) {
-      for (let col = 0; col < colNum; col++) {
+    for (let row = 0; row < this.rowNum; row++) {
+      for (let col = 0; col < this.colNum; col++) {
         let neighbours = [this];
 
         for (let i = row - 1; i <= row + 1; i++) {
           for (let j = col - 1; j <= col + 1; j++) {
-            if ((i != row || j != col) && i >= 0 && i < rowNum && j >= 0 && j < colNum) {
+            if ((i != row || j != col) && i >= 0 && i < this.rowNum && j >= 0 && j < this.colNum) {
               neighbours.push(this.cells[i][j]);
             }
           }
@@ -55,8 +61,8 @@ const CA = class {
    * @param {number} onProb probability of a state being 'on'
    */
   randomizeStates(onProb = 0.4) {
-    for (let r = 0; r < rowNum; r++) {
-      for (let c = 0; c < colNum; c++) {
+    for (let r = 0; r < this.rowNum; r++) {
+      for (let c = 0; c < this.colNum; c++) {
         const prob = Math.random(); // [0-1]
         if (prob <= onProb) {
           this.cells[r][c].setState('on');
@@ -119,74 +125,4 @@ const Cell = class {
   }
 };
 
-const rowNum = 100, colNum = 100;
-let M = new CA(['on', 'off']);
-setupElements();
-M.randomizeStates();
-
-/**
- * Setup the html grid elements
- * @function setupElements
- */
-function setupElements() {
-  // Setup the grid object
-  const grid = $('#grid');
-  grid.css('grid-template-columns', (100 / colNum + '%').repeat(colNum));
-  grid.css('grid-template-rows', (100 / rowNum + '%').repeat(rowNum));
-
-  // Init all grid cells
-  for (let r = 0; r < rowNum; r++) {
-    for (let c = 0; c < colNum; c++) {
-      const id = M.cells[r][c].id;
-      const cell = $('<div>').attr('id', id);
-      $(grid).append(cell);
-
-      // On click, toggle a cell on/off
-      $(cell).on('click', () => {
-        if (M.cells[r][c].state == 'on') {
-          M.cells[r][c].setState('off');
-        }
-        else {
-          M.cells[r][c].setState('on');
-        }
-      });
-    }
-  }
-
-  // Set randomize button
-  $('button#randomize').on('click', () => {
-    const probability = $('#prob').val();
-    M.randomizeStates(probability);
-  });
-  // Set iterate button
-  $('button#iterate').on('click', () => {
-    const threshold = $('#thresh').val();
-    iterate(threshold);
-  });
-}
-
-/**
- * Apply basic rule to each cell in CA
- * - If enough neighours are in the 'on' state, turn on
- * - Else, turn off
- * @function iterate
- * @param {number} threshold the number of neighbours that must be on for a cell to also turn on
- */
-function iterate(threshold = 4) {
-  let onCells = [];
-  let offCells = [];
-
-  M.cells.forEach((row) => {
-    row.forEach((cell) => {
-      if (cell.numNeighAt('on') >= threshold) {
-        onCells.push(cell);
-      }
-      else if (cell.state == 'on') {
-        offCells.push(cell);
-      }
-    });
-  });
-
-  onCells.forEach(cell => cell.setState('on'));
-  offCells.forEach(cell => cell.setState('off'));
-}
+export { CA };
