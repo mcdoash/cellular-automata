@@ -17,11 +17,13 @@ const CA = class {
    * @param {number} rows number of rows
    * @param {number} cols number of columns
    * @param {Array} states set of CA states
+   * @param {Array} rules set of rules
    */
-  constructor(rows, cols, states) {
+  constructor(rows, cols, states, rules) {
     this.rowNum = rows;
     this.colNum = cols;
     this.states = states;
+    this.rules = rules;
 
     // Init cells
     for (let r = 0; r < this.rowNum; r++) {
@@ -72,6 +74,33 @@ const CA = class {
         }
       }
     }
+  }
+
+  /**
+   * Apply rules
+   * @function iterate
+   */
+  iterate() {
+    let changedCells = [];
+
+    // Iterate over all cells
+    this.cells.forEach((row) => {
+      row.forEach((cell) => {
+        // Iterate over all rules
+        this.rules.forEach((rule) => {
+          // If enough neighboura are at the rule's start state, cell will have rule's end state
+          if (cell.numNeighAt(rule.startState) >= rule.threshold) {
+            changedCells.push({
+              cell: cell,
+              state: rule.endState
+            });
+          }
+        });
+      });
+    });
+
+    // Actually change states after iteration
+    changedCells.forEach(change => change.cell.setState(change.state));
   }
 };
 

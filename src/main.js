@@ -2,7 +2,17 @@ import { CA } from './automata.mjs';
 import './style.scss';
 
 const rowNum = 100, colNum = 100;
-let M = new CA(rowNum, colNum, ['on', 'off']);
+const rule1 = {
+  startState: 'on',
+  threshold: 4,
+  endState: 'on'
+};
+const rule2 = {
+  startState: 'off',
+  threshold: 5,
+  endState: 'off'
+};
+let M = new CA(rowNum, colNum, ['on', 'off'], [rule1, rule2]);
 setupElements();
 M.randomizeStates();
 
@@ -43,32 +53,7 @@ function setupElements() {
   // Set iterate button
   $('button#iterate').on('click', () => {
     const threshold = $('#thresh').val();
-    iterate(threshold);
+    // iterate(threshold);
+    M.iterate();
   });
-}
-
-/**
- * Apply basic rule to each cell in CA
- * - If enough neighours are in the 'on' state, turn on
- * - Else, turn off
- * @function iterate
- * @param {number} threshold the number of neighbours that must be on for a cell to also turn on
- */
-function iterate(threshold = 4) {
-  let onCells = [];
-  let offCells = [];
-
-  M.cells.forEach((row) => {
-    row.forEach((cell) => {
-      if (cell.numNeighAt('on') >= threshold) {
-        onCells.push(cell);
-      }
-      else if (cell.state == 'on') {
-        offCells.push(cell);
-      }
-    });
-  });
-
-  onCells.forEach(cell => cell.setState('on'));
-  offCells.forEach(cell => cell.setState('off'));
 }
