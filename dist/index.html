@@ -4,15 +4,76 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>CA</title>
-    <script type="module" crossorigin>var f=Object.defineProperty;var h=(s,t,o)=>t in s?f(s,t,{enumerable:!0,configurable:!0,writable:!0,value:o}):s[t]=o;var l=(s,t,o)=>h(s,typeof t!="symbol"?t+"":t,o);(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const e of document.querySelectorAll('link[rel="modulepreload"]'))r(e);new MutationObserver(e=>{for(const i of e)if(i.type==="childList")for(const u of i.addedNodes)u.tagName==="LINK"&&u.rel==="modulepreload"&&r(u)}).observe(document,{childList:!0,subtree:!0});function o(e){const i={};return e.integrity&&(i.integrity=e.integrity),e.referrerPolicy&&(i.referrerPolicy=e.referrerPolicy),e.crossOrigin==="use-credentials"?i.credentials="include":e.crossOrigin==="anonymous"?i.credentials="omit":i.credentials="same-origin",i}function r(e){if(e.ep)return;e.ep=!0;const i=o(e);fetch(e.href,i)}})();const d=class{constructor(s,t,o){l(this,"rowNum");l(this,"colNum");l(this,"cells",[]);l(this,"states",[]);l(this,"transitions",{});this.rowNum=s,this.colNum=t,this.states=o;for(let r=0;r<this.rowNum;r++){this.cells[r]=[];for(let e=0;e<this.colNum;e++)this.cells[r][e]=new m(r,e,this.states[0])}this.calcNeighbours()}calcNeighbours(){for(let s=0;s<this.rowNum;s++)for(let t=0;t<this.colNum;t++){let o=[this];for(let r=s-1;r<=s+1;r++)for(let e=t-1;e<=t+1;e++)(r!=s||e!=t)&&r>=0&&r<this.rowNum&&e>=0&&e<this.colNum&&o.push(this.cells[r][e]);this.cells[s][t].neighbours=o}}randomizeStates(s=.4){for(let t=0;t<this.rowNum;t++)for(let o=0;o<this.colNum;o++)Math.random()<=s?this.cells[t][o].setState("on"):this.cells[t][o].setState("off")}},m=class{constructor(s,t,o){l(this,"row");l(this,"col");l(this,"id");l(this,"state");l(this,"neighbours");this.row=s,this.col=t,this.id=this.row+"-"+this.col,this.setState(o)}setState(s){this.state=s,$("#"+this.id).attr("class",s)}numNeighAt(s){return this.neighbours.reduce((t,o)=>t+(o.state==s?1:0),0)}},n=100,a=100;let c=new d(n,a,["on","off"]);p();c.randomizeStates();function p(){const s=$("#grid");s.css("grid-template-columns",(100/a+"%").repeat(a)),s.css("grid-template-rows",(100/n+"%").repeat(n));for(let t=0;t<n;t++)for(let o=0;o<a;o++){const r=c.cells[t][o].id,e=$("<div>").attr("id",r);$(s).append(e),$(e).on("click",()=>{c.cells[t][o].state=="on"?c.cells[t][o].setState("off"):c.cells[t][o].setState("on")})}$("button#randomize").on("click",()=>{const t=$("#prob").val();c.randomizeStates(t)}),$("button#iterate").on("click",()=>{const t=$("#thresh").val();N(t)})}function N(s=4){let t=[],o=[];c.cells.forEach(r=>{r.forEach(e=>{e.numNeighAt("on")>=s?t.push(e):e.state=="on"&&o.push(e)})}),t.forEach(r=>r.setState("on")),o.forEach(r=>r.setState("off"))}</script>
-    <style rel="stylesheet" crossorigin>body{font-size:1.75rem;color:#fff;background-color:#787878}#grid{width:75vh;height:75vh;padding:10px;display:grid;gap:2px}#grid div.off{background-color:#000}#grid div.on{background-color:#fff}</style>
+    <script type="module" crossorigin>var g=Object.defineProperty;var w=(e,t,s)=>t in e?g(e,t,{enumerable:!0,configurable:!0,writable:!0,value:s}):e[t]=s;var c=(e,t,s)=>w(e,typeof t!="symbol"?t+"":t,s);(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))r(o);new MutationObserver(o=>{for(const l of o)if(l.type==="childList")for(const n of l.addedNodes)n.tagName==="LINK"&&n.rel==="modulepreload"&&r(n)}).observe(document,{childList:!0,subtree:!0});function s(o){const l={};return o.integrity&&(l.integrity=o.integrity),o.referrerPolicy&&(l.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?l.credentials="include":o.crossOrigin==="anonymous"?l.credentials="omit":l.credentials="same-origin",l}function r(o){if(o.ep)return;o.ep=!0;const l=s(o);fetch(o.href,l)}})();const d=class{constructor(e,t,s,r){c(this,"rowNum");c(this,"colNum");c(this,"cells",[]);c(this,"states",[]);c(this,"transitions",{});this.rowNum=e,this.colNum=t,this.states=s,this.rules=r;for(let o=0;o<this.rowNum;o++){this.cells[o]=[];for(let l=0;l<this.colNum;l++)this.cells[o][l]=new b(o,l,this.states[0])}this.calcNeighbours()}calcNeighbours(){for(let e=0;e<this.rowNum;e++)for(let t=0;t<this.colNum;t++){let s=[this];for(let r=e-1;r<=e+1;r++)for(let o=t-1;o<=t+1;o++)(r!=e||o!=t)&&r>=0&&r<this.rowNum&&o>=0&&o<this.colNum&&s.push(this.cells[r][o]);this.cells[e][t].neighbours=s}}randomizeStates(e=.4){for(let t=0;t<this.rowNum;t++)for(let s=0;s<this.colNum;s++)Math.random()<=e?this.cells[t][s].setState("on"):this.cells[t][s].setState("off")}iterate(){let e=[];this.cells.forEach(t=>{t.forEach(s=>{this.rules.forEach(r=>{s.numNeighAt(r.startState)>=r.threshold&&e.push({cell:s,state:r.endState})})})}),e.forEach(t=>t.cell.setState(t.state))}},b=class{constructor(e,t,s){c(this,"row");c(this,"col");c(this,"id");c(this,"state");c(this,"neighbours");this.row=e,this.col=t,this.id=this.row+"-"+this.col,this.setState(s)}setState(e){this.state=e,$("#"+this.id).attr("class",e)}numNeighAt(e){return this.neighbours.reduce((t,s)=>t+(s.state==e?1:0),0)}};let i,m;S();$("button#cave").on("click",()=>v());function S(){let e=0;$("button#add-rule").on("click",()=>{const t=$("#rule").clone().addClass("rule");t.attr("id","rule-"+e),t.find("#start").first().attr("id","start-"+e),t.find("#thresh").first().attr("id","thresh-"+e),t.find("#end").first().attr("id","end-"+e);const s=$("<button>").attr("id","delete-"+e).text("Delete Rule").on("click",()=>$("#"+t.attr("id")).remove());$(t).append(s),$("#rules-container").append(t),e++}),$("input#gap").on("change",function(){$("#grid").css("gap",this.checked?2:"0px")}),$("#create-ca").on("submit",function(t){console.log("submit");let s=!0;const r=t.target.rows.value,o=t.target.cols.value,l=["on","off"];let n=[];return $(".rule").each(function(){const a=$(this).attr("id").split("-")[1],u=$("#start-"+a).val(),f=$("#thresh-"+a).val(),h=$("#end-"+a).val();if(!u||!f||!h)return alert("Invalid rule"),s=!1,!1;n.push({startState:u,threshold:f,endState:h})}),s&&(i=new d(r,o,l,n),p(),i.randomizeStates()),!1})}function p(){const e=$("#grid").empty();e.css("grid-template-columns",(100/i.colNum+"fr ").repeat(i.colNum)),e.css("grid-template-rows",(100/i.rowNum+"fr ").repeat(i.rowNum));for(let t=0;t<i.rowNum;t++)for(let s=0;s<i.colNum;s++){const r=i.cells[t][s].id,o=$("<div>").attr("id",r);$(e).append(o),$(o).on("click",()=>{i.cells[t][s].state=="on"?i.cells[t][s].setState("off"):i.cells[t][s].setState("on")})}$("button#randomize").on("click",()=>{const t=$("#prob").val();i.randomizeStates(t),m=="cave"&&N()}),$("button#iterate").on("click",()=>{$("#thresh").val(),i.iterate()}),$("#automata").show()}function v(){m="cave";const e=100,t=100,s=["on","off"],r={startState:"on",threshold:5,endState:"on"},o={startState:"off",threshold:6,endState:"off"};i=new d(e,t,s,[r,o]),p(),i.randomizeStates(.45),N()}function N(){i.cells.forEach(e=>{e.forEach(t=>{(t.row==0||t.row==i.rowNum-1||t.col==0||t.col==i.colNum-1)&&t.setState("off")})})}</script>
+    <style rel="stylesheet" crossorigin>body{font-size:1.75rem;color:#fff;background-color:#787878}#presets{margin-bottom:2%;float:left}#presets button{display:block;margin-top:15px}#new-automata{float:right}#new-automata form#create-ca{width:fit-content;margin:2% 0;padding:20px;color:#000;background-color:#d9d9d9}#new-automata form#create-ca .form-input{margin-bottom:5px}#new-automata form#create-ca label{margin-right:1rem}#new-automata form#create-ca input:not([type=submit]),#new-automata form#create-ca select{float:right}#new-automata form#create-ca fieldset{width:80%;margin-top:15px}#new-automata form#create-ca fieldset legend{font-weight:700}#new-automata form#create-ca #rule{display:none}#new-automata form#create-ca .rule{margin-bottom:15px;padding:10px;background-color:#ffffff80}#automata{display:none;clear:both}#automata #grid{width:95vh;height:95vh;padding:10px;display:grid}#automata #grid div.off{background-color:#000}#automata #grid div.on{background-color:#fff}</style>
   </head>
   <body>
-    <label for="prob">'On' probability: </label><input id="prob" type="number" min="0" max="1" step="0.01" value="0.4">
-    <button id="randomize">Randomize</button>
-    <label for="thresh">Threshold: </label><input id="thresh" type="number" min="0" max="9" step="1" value="4">
-    <button id="iterate">Iterate</button>
-    <div id="grid"></div>
+    <div id="presets">
+      <span>Preset Automata: </span>
+      <button id="cave">Caves</button>
+    </div>
+
+    <div id="new-automata">
+      <span>Create New Automata:</span>
+
+      <form id="create-ca">
+        <div class="form-input">
+          <label for="rows">Number of rows:</label>
+          <input id="rows" name="rows" type="number" min="1" max="200" step="1" placeholder="100">
+        </div>
+        <div class="form-input">
+          <label for="cols">Number of columns:</label>
+          <input id="cols" name="cols" type="number" min="1" max="100" step="1" placeholder="100">
+        </div>
+        <!--
+        <div class="form-input">
+          <label for="states">States:</label>
+          <input id="states" name="states" type="text" placeholder="on, off">
+        </div>
+        -->
+        <fieldset class="form-input">
+          <legend>Rules</legend>
+          <div id="rule">
+            <div class="form-input">
+              <label for="start">Start state:</label>
+              <select id="start" name="start">
+                <option disabled selected hidden value> -- </option>
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+            <div class="form-input">
+              <label for="thresh">Threshold:</label>
+              <input id="thresh" name="thresh" type="number" min="0" max="9" step="1">
+            </div>
+            <div class="form-input">
+              <label for="end">End state:</label>
+              <select id="end" name="end">
+                <option disabled selected hidden value> -- </option>
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+          </div>
+          <div id="rules-container">
+
+          </div>
+          <button id="add-rule" type="button">Add Rule</button>
+        </fieldset>
+
+        <input id="create" type="submit" value="Create Automatata" />
+      </form>
+    </div>
+
+    <div id="automata">
+      <label for="prob">'On' probability: </label><input id="prob" type="number" min="0" max="1" step="0.01" value="0.4">
+      <button id="randomize">Randomize</button>
+      <button id="iterate">Iterate</button>
+      <label for="gap">Show grid lines: </label>
+      <input id="gap" name="gap" type="checkbox">
+
+      <div id="grid"></div>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   </body>

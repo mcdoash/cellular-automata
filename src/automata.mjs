@@ -79,6 +79,7 @@ const CA = class {
   /**
    * Apply rules
    * @function iterate
+   * @returns if the iterations created a change in state
    */
   iterate() {
     let changedCells = [];
@@ -89,7 +90,7 @@ const CA = class {
         // Iterate over all rules
         this.rules.forEach((rule) => {
           // If enough neighboura are at the rule's start state, cell will have rule's end state
-          if (cell.numNeighAt(rule.startState) >= rule.threshold) {
+          if (cell.numNeighAt(rule.startState) >= rule.threshold && cell.state != rule.endState) {
             changedCells.push({
               cell: cell,
               state: rule.endState
@@ -101,6 +102,29 @@ const CA = class {
 
     // Actually change states after iteration
     changedCells.forEach(change => change.cell.setState(change.state));
+
+    return changedCells.length != 0;
+  }
+
+  /**
+   * Iterate until stable
+   * @function stabilize
+   */
+  stabilize() {
+    let iterations = 0;
+    let change = true;
+
+    while (change && iterations < 100) {
+      change = this.iterate();
+      iterations++;
+    }
+
+    if (!change) {
+      alert('Stabilized in ' + iterations + ' iterations');
+    }
+    else {
+      alert('Failed to stabilize after ' + iterations + ' iterations');
+    }
   }
 };
 
