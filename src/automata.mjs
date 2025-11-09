@@ -43,7 +43,7 @@ const CA = class {
   calcNeighbours() {
     for (let row = 0; row < this.rowNum; row++) {
       for (let col = 0; col < this.colNum; col++) {
-        let neighbours = [this];
+        let neighbours = [];
 
         for (let i = row - 1; i <= row + 1; i++) {
           for (let j = col - 1; j <= col + 1; j++) {
@@ -90,7 +90,7 @@ const CA = class {
         // Iterate over all rules
         this.rules.forEach((rule) => {
           // If enough neighbours are at the rule's start state, cell will have rule's end state
-          if (cell.numNeighAt(rule.startState) >= rule.threshold && cell.state != rule.endState) {
+          if (cell.state == rule.startState && cell.numNeighAt(rule.neighState) >= rule.threshold) {
             changedCells.push({
               cell: cell,
               state: rule.endState

@@ -12,7 +12,8 @@ setup();
  */
 function setup() {
   // Automata presets
-  $('button#cave').on('click', () => caveAutomata());
+  $('button#cave').on('click', () => caveGeneration());
+  $('button#life').on('click', () => gameOfLife());
 
   // Set randomize button
   $('button#randomize').on('click', () => {
@@ -46,15 +47,18 @@ function setup() {
       const id = $(this).attr('id').split('-')[1];
 
       const start = $('#start-' + id).val();
+      const neigh = $('#neigh-' + id).val();
       const thresh = $('#thresh-' + id).val();
       const end = $('#end-' + id).val();
 
       rules.push({
         startState: start,
+        neighState: neigh,
         threshold: thresh,
         endState: end
       });
     });
+    console.log(rules);
 
     M = new CA(rowNum, colNum, states, rules);
     setupGrid();
@@ -77,6 +81,7 @@ function setup() {
 
     // Set ids of elements to current rule number
     newRule.find('#start').first().attr('id', 'start-' + numRules);
+    newRule.find('#neigh').first().attr('id', 'neigh-' + numRules);
     newRule.find('#thresh').first().attr('id', 'thresh-' + numRules);
     newRule.find('#end').first().attr('id', 'end-' + numRules);
 
@@ -124,18 +129,20 @@ function setupGrid() {
  * Create a cellular automata that generates cave-like structures
  * @function caveAutomata
  */
-function caveAutomata() {
+function caveGeneration() {
   automataType = 'cave';
   const rowNum = 100, colNum = 100;
   const states = ['on', 'off'];
 
   const onRule = {
-    startState: 'on',
+    startState: 'off',
+    neighState: 'on',
     threshold: 5,
     endState: 'on'
   };
   const offRule = {
-    startState: 'off',
+    startState: 'on',
+    neighState: 'off',
     threshold: 6,
     endState: 'off'
   };
@@ -159,4 +166,43 @@ function setBoundaryWalls() {
       }
     });
   });
+}
+
+/**
+ * Replicate Conway's Game of Life
+ * @function gameOfLife
+ */
+function gameOfLife() {
+  automataType = 'life';
+  const rowNum = 100, colNum = 100;
+  const states = ['on', 'off'];
+
+  const rules = [{
+    startState: 'on',
+    neighState: 'off',
+    threshold: 7,
+    endState: 'off'
+  },
+  {
+    startState: 'on',
+    neighState: 'on',
+    threshold: 4,
+    endState: 'off'
+  },
+  {
+    startState: 'off',
+    neighState: 'on',
+    threshold: 3,
+    endState: 'on'
+  },
+  {
+    startState: 'off',
+    neighState: 'on',
+    threshold: 4,
+    endState: 'off'
+  }];
+
+  M = new CA(rowNum, colNum, states, rules);
+  setupGrid();
+  M.randomizeStates(0.2);
 }
