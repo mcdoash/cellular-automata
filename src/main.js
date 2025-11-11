@@ -15,15 +15,17 @@ function setup() {
   let animate = false;
   let interval;
   $('button#animate').on('click', function () {
+    const speed = $('#speed').val();
+
     if (!animate) {
       interval = setInterval(() => {
         const change = M.iterate();
         if (!change) {
-          clearInterval(this);
+          clearInterval(interval);
           animate = false;
           $('button#animate').text('Animation Done').prop('disabled', true);
         }
-      }, 1000);
+      }, (speed * 1000));
       $(this).text('Stop Animation');
     }
     else {
@@ -73,6 +75,10 @@ function setup() {
   $('button#life').on('click', () => {
     resetAnimation();
     gameOfLife();
+  });
+  $('button#design').on('click', () => {
+    resetAnimation();
+    designAutomata();
   });
 
   // New automata form
@@ -250,4 +256,50 @@ function gameOfLife() {
   M = new CA(rowNum, colNum, states, rules);
   setupGrid();
   M.randomizeStates(0.2);
+}
+
+/**
+ *
+ */
+function designAutomata() {
+  automataType = 'Design Generator';
+  const rowNum = 100, colNum = 100;
+  const states = ['on', 'off'];
+
+  const rules = [{
+    startState: 'on',
+    neighState: 'off',
+    threshold: 7,
+    endState: 'off'
+  },
+  {
+    startState: 'on',
+    neighState: 'on',
+    threshold: 4,
+    endState: 'off'
+  },
+  {
+    startState: 'off',
+    neighState: 'on',
+    threshold: 2,
+    endState: 'on'
+  },
+  {
+    startState: 'off',
+    neighState: 'on',
+    threshold: 4,
+    endState: 'off'
+  }];
+
+  M = new CA(rowNum, colNum, states, rules);
+  setupGrid();
+
+  // Create initial pattern
+  M.cells.forEach((row) => {
+    row.forEach(cell => cell.setState('off'));
+  });
+  M.cells[48][50].setState('on');
+  M.cells[50][48].setState('on');
+  M.cells[50][52].setState('on');
+  M.cells[52][50].setState('on');
 }
