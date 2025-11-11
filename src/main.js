@@ -11,30 +11,73 @@ setup();
  * @function setup
  */
 function setup() {
-  // Automata presets
-  $('button#cave').on('click', () => caveGeneration());
-  $('button#life').on('click', () => gameOfLife());
+  // Animate/stop animation button
+  let animate = false;
+  let interval;
+  $('button#animate').on('click', function () {
+    if (!animate) {
+      interval = setInterval(() => {
+        const change = M.iterate();
+        if (!change) {
+          clearInterval(this);
+          animate = false;
+          $('button#animate').text('Animation Done').prop('disabled', true);
+        }
+      }, 1000);
+      $(this).text('Stop Animation');
+    }
+    else {
+      clearInterval(interval);
+      $(this).text('Animate');
+    }
+    animate = !animate;
+  });
+
+  const resetAnimation = function () {
+    // Reset animation button
+    clearInterval(interval);
+    animate = false;
+    $('button#animate').text('Animate').prop('disabled', false);
+  };
 
   // Set randomize button
   $('button#randomize').on('click', () => {
     const probability = $('#prob').val();
     M.randomizeStates(probability);
+    resetAnimation();
 
-    if (automataType == 'cave') {
+    if (automataType == 'Caves') {
       setBoundaryWalls();
     }
   });
   // Set iterate & stabilize buttons
-  $('button#iterate').on('click', () => M.iterate());
-  $('button#stabilize').on('click', () => M.stabilize());
+  $('button#iterate').on('click', () => {
+    resetAnimation();
+    M.iterate();
+  });
+  $('button#stabilize').on('click', () => {
+    resetAnimation();
+    M.stabilize();
+  });
 
   // Turn grid lines on/off via checkbox
   $('input#gap').on('change', function () {
     $('#grid').css('gap', this.checked ? 1 : 0 + 'px');
   });
 
+  // Automata presets
+  $('button#cave').on('click', () => {
+    resetAnimation();
+    caveGeneration();
+  });
+  $('button#life').on('click', () => {
+    resetAnimation();
+    gameOfLife();
+  });
+
   // New automata form
   $('#create-ca').on('submit', function (e) {
+    resetAnimation();
     const rowNum = e.target.rows.value;
     const colNum = e.target.cols.value;
 
@@ -58,8 +101,8 @@ function setup() {
         endState: end
       });
     });
-    console.log(rules);
 
+    automataType = 'Custom';
     M = new CA(rowNum, colNum, states, rules);
     setupGrid();
     M.randomizeStates();
@@ -101,6 +144,8 @@ function setup() {
  * @function setupElements
  */
 function setupGrid() {
+  $('#automata-name').text(automataType);
+
   // Setup empty grid element
   const grid = $('#grid').empty();
   grid.css('grid-template-columns', (100 / M.colNum + 'fr ').repeat(M.colNum));
@@ -130,7 +175,7 @@ function setupGrid() {
  * @function caveAutomata
  */
 function caveGeneration() {
-  automataType = 'cave';
+  automataType = 'Caves';
   const rowNum = 100, colNum = 100;
   const states = ['on', 'off'];
 
@@ -173,7 +218,7 @@ function setBoundaryWalls() {
  * @function gameOfLife
  */
 function gameOfLife() {
-  automataType = 'life';
+  automataType = 'Game of Life';
   const rowNum = 100, colNum = 100;
   const states = ['on', 'off'];
 

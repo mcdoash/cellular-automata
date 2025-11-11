@@ -49,6 +49,12 @@ body {
   display: none;
   clear: both;
 
+  #automata-title {
+    font-size: 2rem;
+    font-weight: bold;
+    font-variant: small-caps;
+    text-decoration: underline;
+  }
   p { margin: 0; }
 
   #grid {

@@ -85,9 +85,14 @@
     </div>
 
     <div id="automata">
+      <span id="automata-title">Current Automata: <span id="automata-name"></span></span>
+      <br/>
+      <p>Click on a cell to toggle on/off</p>
+      <br/>
       <sp>Randomize: set each cell randomly on/off</p>
       <p>Iterate: run rules on each cell once</p>
       <p>Stabilze: iterate until nothing changes</p>
+      <p>Animate: iterate once per second</p>
       <br/>
 
       <!-- How often a randomized cell will be on -->
@@ -100,6 +105,8 @@
       <button id="iterate">Iterate</button>
       <!-- Iterate over rules until no changes -->
       <button id="stabilize">Stabilize</button>
+      <!-- Iterate over rules once a second -->
+      <button id="animate">Animate</button>
 
       <!-- Set grid gap visibility -->
       <label for="gap">Show grid lines: </label>

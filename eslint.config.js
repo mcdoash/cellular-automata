@@ -36,8 +36,7 @@ module.exports = defineConfig([
           ]
         },
         { exceptAfterOverload: true }
-      ],
-      'class-methods-use-this': 'warn'
+      ]
     }
   }
 ]);
