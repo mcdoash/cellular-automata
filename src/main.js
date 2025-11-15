@@ -83,6 +83,7 @@ function setup() {
 
   // New automata form
   $('#create-ca').on('submit', function (e) {
+    e.preventDefault();
     resetAnimation();
     const rowNum = e.target.rows.value;
     const colNum = e.target.cols.value;
@@ -93,18 +94,13 @@ function setup() {
     // Create rules from input
     let rules = [];
     $('.rule').each(function () {
-      const id = $(this).attr('id').split('-')[1];
-
-      const start = $('#start-' + id).val();
-      const neigh = $('#neigh-' + id).val();
-      const thresh = $('#thresh-' + id).val();
-      const end = $('#end-' + id).val();
+      const inputs = $(this).find(':input');
 
       rules.push({
-        startState: start,
-        neighState: neigh,
-        threshold: thresh,
-        endState: end
+        startState: $(inputs[0]).val(),
+        neighState: $(inputs[1]).val(),
+        threshold: $(inputs[2]).val(),
+        endState: $(inputs[3]).val()
       });
     });
 
@@ -117,31 +113,11 @@ function setup() {
   });
 
   // Form: new rules creation
-  /** @todo better rules creation */
-  let numRules = 0;
-  // Set rule template and remove from DOM
-  const ruleTemp = $('#rule').clone();
-  $('#rule').remove();
-
   $('button#add-rule').on('click', () => {
-    // Create new rules input elements
-    const newRule = ruleTemp.clone().addClass('rule');
-    newRule.attr('id', 'rule-' + numRules);
-
-    // Set ids of elements to current rule number
-    newRule.find('#start').first().attr('id', 'start-' + numRules);
-    newRule.find('#neigh').first().attr('id', 'neigh-' + numRules);
-    newRule.find('#thresh').first().attr('id', 'thresh-' + numRules);
-    newRule.find('#end').first().attr('id', 'end-' + numRules);
-
+    const newRule = $('#rule').contents().clone();
     // Set delete button to delete this rule
-    const deleteBtn = $('<button>').attr('id', 'delete-' + numRules).text('Delete Rule').on('click', () =>
-      $('#' + newRule.attr('id')).remove()
-    );
-    $(newRule).append(deleteBtn);
-
+    $(newRule).children('.delete-rule').on('click', () => $(newRule).remove());
     $('#rules-container').append(newRule);
-    numRules++;
   });
 }
 

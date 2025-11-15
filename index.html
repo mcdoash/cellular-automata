@@ -25,7 +25,7 @@
         </div>
         <div class="form-input">
           <label for="cols">Number of columns:</label>
-          <input id="cols" name="cols" type="number" min="1" max="100" step="1" placeholder="100" required>
+          <input id="cols" name="cols" type="number" min="1" max="200" step="1" placeholder="100" required>
         </div>
         <!--
         <div class="form-input">
@@ -36,47 +36,51 @@
         <fieldset class="form-input">
           <legend>Rules</legend>
           <p>If cell is in <code>start state</code> <br/>and <code>threshold</code> neighbours <br/>at <code>neigh state</code>, change to <br/><code>end state</code></p>
-          <div id="rule">
-
-            <!-- Check if current cell is in this state -->
-            <div class="form-input">
-              <label for="start">Start state:</label>
-              <select id="start" name="start" required>
-                <option disabled selected hidden value> -- </option>
-                <option value="on">On</option>
-                <option value="off">Off</option>
-              </select>
-            </div>
-
-            <!-- Check if neighbours are in this state -->
-            <div class="form-input">
-              <label for="neigh">Neigh state:</label>
-              <select id="neigh" name="neigh" required>
-                <option disabled selected hidden value> -- </option>
-                <option value="on">On</option>
-                <option value="off">Off</option>
-              </select>
-            </div>
-
-            <!-- Number matching neighbours needed -->
-            <div class="form-input">
-              <label for="thresh">Threshold:</label>
-              <input id="thresh" name="thresh" type="number" min="0" max="8" step="1" required>
-            </div>
-
-            <!-- Change to this state if passed -->
-            <div class="form-input">
-              <label for="end">End state:</label>
-              <select id="end" name="end" required>
-                <option disabled selected hidden value> -- </option>
-                <option value="on">On</option>
-                <option value="off">Off</option>
-              </select>
-            </div>
-          </div>
 
           <!-- List of all rules -->
-          <div id="rules-container"></div>
+          <div id="rules-container">
+            <template id="rule">
+              <div class="rule">
+                <!-- Check if current cell is in this state -->
+                <div class="form-input">
+                  <label>Start state:</label>
+                  <select required>
+                    <option disabled selected hidden value> -- </option>
+                    <option value="on">On</option>
+                    <option value="off">Off</option>
+                  </select>
+                </div>
+
+                <!-- Check if neighbours are in this state -->
+                <div class="form-input">
+                  <label>Neigh state:</label>
+                  <select required>
+                    <option disabled selected hidden value> -- </option>
+                    <option value="on">On</option>
+                    <option value="off">Off</option>
+                  </select>
+                </div>
+
+                <!-- Number matching neighbours needed -->
+                <div class="form-input">
+                  <label>Threshold:</label>
+                  <input type="number" min="0" max="8" step="1" required>
+                </div>
+
+                <!-- Change to this state if passed -->
+                <div class="form-input">
+                  <label>End state:</label>
+                  <select required>
+                    <option disabled selected hidden value> -- </option>
+                    <option value="on">On</option>
+                    <option value="off">Off</option>
+                  </select>
+                </div>
+
+                <button class="delete-rule" type="button">Delete Rule</button>
+              </div>
+            </template>
+          </div>
 
           <button id="add-rule" type="button">Add Rule</button>
         </fieldset>
