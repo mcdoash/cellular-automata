@@ -85,7 +85,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li><li><a href="Cell.html">Cell</a></li></ul><h3>Global</h3><ul><li><a href="global.html#caveAutomata">caveAutomata</a></li><li><a href="global.html#setBoundaryWalls">setBoundaryWalls</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupElements">setupElements</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-Presets.html">Presets</a></li></ul><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li><li><a href="Cell.html">Cell</a></li></ul><h3>Global</h3><ul><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupElements">setupElements</a></li></ul></div>
                 
             </nav>
         </div>
@@ -102,8 +102,9 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import './style.scss'; // Stylesheet
-import { CA } from './automata.mjs'; // Automata classes
+            <pre class="prettyprint source linenums"><code>import './style.scss';
+import { CA } from './automata.mjs';
+import { Presets } from './presets.mjs';
 
 // Global automata variables
 let M;
@@ -115,29 +116,86 @@ setup();
  * @function setup
  */
 function setup() {
-  // Automata presets
-  $('button#cave').on('click', () => caveAutomata());
+  // Animate/stop animation button
+  let animate = false;
+  let interval;
+  $('button#animate').on('click', function () {
+    const speed = $('#speed').val();
+
+    if (!animate) {
+      interval = setInterval(() => {
+        const change = M.iterate();
+        if (!change) {
+          clearInterval(interval);
+          animate = false;
+          $('button#animate').text('Animation Done').prop('disabled', true);
+        }
+      }, (speed * 1000));
+      $(this).text('Stop Animation');
+    }
+    else {
+      clearInterval(interval);
+      $(this).text('Animate');
+    }
+    animate = !animate;
+  });
+
+  // Stop animation and reset button
+  const resetAnimation = function () {
+    clearInterval(interval);
+    animate = false;
+    $('button#animate').text('Animate').prop('disabled', false);
+  };
 
   // Set randomize button
   $('button#randomize').on('click', () => {
     const probability = $('#prob').val();
     M.randomizeStates(probability);
+    resetAnimation();
 
-    if (automataType == 'cave') {
-      setBoundaryWalls();
+    if (automataType == 'Caves') {
+      Presets.setBoundaryWalls(M);
     }
   });
   // Set iterate &amp; stabilize buttons
-  $('button#iterate').on('click', () => M.iterate());
-  $('button#stabilize').on('click', () => M.stabilize());
+  $('button#iterate').on('click', () => {
+    resetAnimation();
+    M.iterate();
+  });
+  $('button#stabilize').on('click', () => {
+    resetAnimation();
+    M.stabilize();
+  });
 
   // Turn grid lines on/off via checkbox
   $('input#gap').on('change', function () {
     $('#grid').css('gap', this.checked ? 1 : 0 + 'px');
   });
 
+  // Automata presets
+  $('button#cave').on('click', () => {
+    resetAnimation();
+    automataType = 'Caves';
+    M = Presets.caveGeneration();
+    setupGrid();
+  });
+  $('button#life').on('click', () => {
+    resetAnimation();
+    automataType = 'Game of Life';
+    M = Presets.gameOfLife();
+    setupGrid();
+  });
+  $('button#design').on('click', () => {
+    resetAnimation();
+    automataType = 'Design Generator';
+    M = Presets.designAutomata();
+    setupGrid();
+  });
+
   // New automata form
   $('#create-ca').on('submit', function (e) {
+    e.preventDefault();
+    resetAnimation();
     const rowNum = e.target.rows.value;
     const colNum = e.target.cols.value;
 
@@ -147,19 +205,17 @@ function setup() {
     // Create rules from input
     let rules = [];
     $('.rule').each(function () {
-      const id = $(this).attr('id').split('-')[1];
-
-      const start = $('#start-' + id).val();
-      const thresh = $('#thresh-' + id).val();
-      const end = $('#end-' + id).val();
+      const inputs = $(this).find(':input');
 
       rules.push({
-        startState: start,
-        threshold: thresh,
-        endState: end
+        startState: $(inputs[0]).val(),
+        neighState: $(inputs[1]).val(),
+        threshold: $(inputs[2]).val(),
+        endState: $(inputs[3]).val()
       });
     });
 
+    automataType = 'Custom';
     M = new CA(rowNum, colNum, states, rules);
     setupGrid();
     M.randomizeStates();
@@ -168,30 +224,11 @@ function setup() {
   });
 
   // Form: new rules creation
-  /** @todo better rules creation */
-  let numRules = 0;
-  // Set rule template and remove from DOM
-  const ruleTemp = $('#rule').clone();
-  $('#rule').remove();
-
   $('button#add-rule').on('click', () => {
-    // Create new rules input elements
-    const newRule = ruleTemp.clone().addClass('rule');
-    newRule.attr('id', 'rule-' + numRules);
-
-    // Set ids of elements to current rule number
-    newRule.find('#start').first().attr('id', 'start-' + numRules);
-    newRule.find('#thresh').first().attr('id', 'thresh-' + numRules);
-    newRule.find('#end').first().attr('id', 'end-' + numRules);
-
+    const newRule = $('#rule').contents().clone();
     // Set delete button to delete this rule
-    const deleteBtn = $('&lt;button>').attr('id', 'delete-' + numRules).text('Delete Rule').on('click', () =>
-      $('#' + newRule.attr('id')).remove()
-    );
-    $(newRule).append(deleteBtn);
-
+    $(newRule).children('.delete-rule').on('click', () => $(newRule).remove());
     $('#rules-container').append(newRule);
-    numRules++;
   });
 }
 
@@ -200,6 +237,8 @@ function setup() {
  * @function setupElements
  */
 function setupGrid() {
+  $('#automata-name').text(automataType);
+
   // Setup empty grid element
   const grid = $('#grid').empty();
   grid.css('grid-template-columns', (100 / M.colNum + 'fr ').repeat(M.colNum));
@@ -209,7 +248,7 @@ function setupGrid() {
   for (let r = 0; r &lt; M.rowNum; r++) {
     for (let c = 0; c &lt; M.colNum; c++) {
       const id = M.cells[r][c].id;
-      const cell = $('&lt;div>').attr('id', id);
+      const cell = $('&lt;div>').attr('id', id).attr('class', M.cells[r][c].state);
       $(grid).append(cell);
 
       // On click, toggle a cell on/off
@@ -221,48 +260,6 @@ function setupGrid() {
   }
 
   $('#automata').show();
-}
-
-/** AUTOMATA PRESETS */
-/**
- * Create a cellular automata that generates cave-like structures
- * @function caveAutomata
- */
-function caveAutomata() {
-  automataType = 'cave';
-  const rowNum = 100, colNum = 100;
-  const states = ['on', 'off'];
-
-  const onRule = {
-    startState: 'on',
-    threshold: 5,
-    endState: 'on'
-  };
-  const offRule = {
-    startState: 'off',
-    threshold: 6,
-    endState: 'off'
-  };
-
-  M = new CA(rowNum, colNum, states, [onRule, offRule]);
-  setupGrid();
-  M.randomizeStates(0.45);
-  // Set all boundaries to "walls"
-  setBoundaryWalls();
-}
-
-/**
- * Turn every cell at a boundary off to similate walls on a map
- * @function setBoundaryWalls
- */
-function setBoundaryWalls() {
-  M.cells.forEach((row) => {
-    row.forEach((cell) => {
-      if (cell.row == 0 || cell.row == (M.rowNum - 1) || cell.col == 0 || cell.col == (M.colNum - 1)) {
-        cell.setState('off');
-      }
-    });
-  });
 }
 </code></pre>
         </article>

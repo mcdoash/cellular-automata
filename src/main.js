@@ -1,5 +1,6 @@
-import './style.scss'; // Stylesheet
-import { CA } from './automata.mjs'; // Automata classes
+import './style.scss';
+import { CA } from './automata.mjs';
+import { Presets } from './presets.mjs';
 
 // Global automata variables
 let M;
@@ -35,8 +36,8 @@ function setup() {
     animate = !animate;
   });
 
+  // Stop animation and reset button
   const resetAnimation = function () {
-    // Reset animation button
     clearInterval(interval);
     animate = false;
     $('button#animate').text('Animate').prop('disabled', false);
@@ -49,7 +50,7 @@ function setup() {
     resetAnimation();
 
     if (automataType == 'Caves') {
-      setBoundaryWalls();
+      Presets.setBoundaryWalls(M);
     }
   });
   // Set iterate & stabilize buttons
@@ -70,15 +71,21 @@ function setup() {
   // Automata presets
   $('button#cave').on('click', () => {
     resetAnimation();
-    caveGeneration();
+    automataType = 'Caves';
+    M = Presets.caveGeneration();
+    setupGrid();
   });
   $('button#life').on('click', () => {
     resetAnimation();
-    gameOfLife();
+    automataType = 'Game of Life';
+    M = Presets.gameOfLife();
+    setupGrid();
   });
   $('button#design').on('click', () => {
     resetAnimation();
-    designAutomata();
+    automataType = 'Design Generator';
+    M = Presets.designAutomata();
+    setupGrid();
   });
 
   // New automata form
@@ -137,7 +144,7 @@ function setupGrid() {
   for (let r = 0; r < M.rowNum; r++) {
     for (let c = 0; c < M.colNum; c++) {
       const id = M.cells[r][c].id;
-      const cell = $('<div>').attr('id', id);
+      const cell = $('<div>').attr('id', id).attr('class', M.cells[r][c].state);
       $(grid).append(cell);
 
       // On click, toggle a cell on/off
@@ -149,133 +156,4 @@ function setupGrid() {
   }
 
   $('#automata').show();
-}
-
-/** AUTOMATA PRESETS */
-/**
- * Create a cellular automata that generates cave-like structures
- * @function caveAutomata
- */
-function caveGeneration() {
-  automataType = 'Caves';
-  const rowNum = 100, colNum = 100;
-  const states = ['on', 'off'];
-
-  const onRule = {
-    startState: 'off',
-    neighState: 'on',
-    threshold: 5,
-    endState: 'on'
-  };
-  const offRule = {
-    startState: 'on',
-    neighState: 'off',
-    threshold: 6,
-    endState: 'off'
-  };
-
-  M = new CA(rowNum, colNum, states, [onRule, offRule]);
-  setupGrid();
-  M.randomizeStates(0.45);
-  // Set all boundaries to "walls"
-  setBoundaryWalls();
-}
-
-/**
- * Turn every cell at a boundary off to similate walls on a map
- * @function setBoundaryWalls
- */
-function setBoundaryWalls() {
-  M.cells.forEach((row) => {
-    row.forEach((cell) => {
-      if (cell.row == 0 || cell.row == (M.rowNum - 1) || cell.col == 0 || cell.col == (M.colNum - 1)) {
-        cell.setState('off');
-      }
-    });
-  });
-}
-
-/**
- * Replicate Conway's Game of Life
- * @function gameOfLife
- */
-function gameOfLife() {
-  automataType = 'Game of Life';
-  const rowNum = 100, colNum = 100;
-  const states = ['on', 'off'];
-
-  const rules = [{
-    startState: 'on',
-    neighState: 'off',
-    threshold: 7,
-    endState: 'off'
-  },
-  {
-    startState: 'on',
-    neighState: 'on',
-    threshold: 4,
-    endState: 'off'
-  },
-  {
-    startState: 'off',
-    neighState: 'on',
-    threshold: 3,
-    endState: 'on'
-  },
-  {
-    startState: 'off',
-    neighState: 'on',
-    threshold: 4,
-    endState: 'off'
-  }];
-
-  M = new CA(rowNum, colNum, states, rules);
-  setupGrid();
-  M.randomizeStates(0.2);
-}
-
-/**
- *
- */
-function designAutomata() {
-  automataType = 'Design Generator';
-  const rowNum = 100, colNum = 100;
-  const states = ['on', 'off'];
-
-  const rules = [{
-    startState: 'on',
-    neighState: 'off',
-    threshold: 7,
-    endState: 'off'
-  },
-  {
-    startState: 'on',
-    neighState: 'on',
-    threshold: 4,
-    endState: 'off'
-  },
-  {
-    startState: 'off',
-    neighState: 'on',
-    threshold: 2,
-    endState: 'on'
-  },
-  {
-    startState: 'off',
-    neighState: 'on',
-    threshold: 4,
-    endState: 'off'
-  }];
-
-  M = new CA(rowNum, colNum, states, rules);
-  setupGrid();
-
-  // Create initial pattern
-  M.cells.forEach((row) => {
-    row.forEach(cell => cell.setState('off'));
-  });
-  M.cells[48][50].setState('on');
-  M.cells[50][48].setState('on');
-  M.cells[50][52].setState('on');
-  M.cells[52][50].setState('on');
 }

@@ -1,29 +1,24 @@
 /**
  * Class representing a cellular automata
- * @class
- * @property {Array} cells a 2D array of cells
- * @property {Array} states a finite set of states
- * @property {object} transitions cell state transition rules
+ * @property {number} rowNum the number of rows
+ * @property {number} colNum the number of columns
+ * @property {Array.<Cell[]>} cells 2D array of cells
+ * @property {Array} states finite set of states
+ * @property {object[]} rules cell state transition rules
  */
 const CA = class {
-  rowNum;
-  colNum;
-  cells = [];
-  states = [];
-  transitions = {};
-
   /**
-   * @constructs CA
-   * @param {number} rows number of rows
-   * @param {number} cols number of columns
+   * @param {number} rows the number of rows
+   * @param {number} cols the number of columns
    * @param {Array} states set of CA states
-   * @param {Array} rules set of rules
+   * @param {object[]} rules set of rules
    */
   constructor(rows, cols, states, rules) {
     this.rowNum = rows;
     this.colNum = cols;
     this.states = states;
     this.rules = rules;
+    this.cells = [];
 
     // Init cells
     for (let r = 0; r < this.rowNum; r++) {
@@ -39,6 +34,7 @@ const CA = class {
    * Calculate and assign the neighbours of each cell
    * @function CA#calcNeighbours
    * @todo more efficient method
+   * @todo store cell indices rather than cell itself?
    */
   calcNeighbours() {
     for (let row = 0; row < this.rowNum; row++) {
@@ -66,12 +62,7 @@ const CA = class {
     for (let r = 0; r < this.rowNum; r++) {
       for (let c = 0; c < this.colNum; c++) {
         const prob = Math.random(); // [0-1]
-        if (prob <= onProb) {
-          this.cells[r][c].setState('on');
-        }
-        else {
-          this.cells[r][c].setState('off');
-        }
+        this.cells[r][c].setState(prob <= onProb ? 'on' : 'off');
       }
     }
   }
@@ -84,10 +75,9 @@ const CA = class {
   iterate() {
     let changedCells = [];
 
-    // Iterate over all cells
+    // Iterate over each rule per cells
     this.cells.forEach((row) => {
       row.forEach((cell) => {
-        // Iterate over all rules
         this.rules.forEach((rule) => {
           // If enough neighbours are at the rule's start state, cell will have rule's end state
           if (cell.state == rule.startState && cell.numNeighAt(rule.neighState) >= rule.threshold) {
@@ -131,29 +121,21 @@ const CA = class {
 
 /**
  * Class representing a cell in a CA
- * @class
  * @property {number} row the row position of a cell
  * @property {number} col the column position of a cell
  * @property {string} id the matching grid cell's id
  * @property {string} state the cell's current state
- * @property {Array} neighbours list of the cell's neighbours
+ * @property {Array.<Cell>} neighbours list of the cell's neighbours
  */
 const Cell = class {
-  row;
-  col;
-  id;
-  state;
-  neighbours;
-
   /**
-   * @constructs CA
-   * @param {number} r the row position
-   * @param {number} c the column position
+   * @param {number} row the row position
+   * @param {number} col the column position
    * @param {string} initState the initial state
    */
-  constructor(r, c, initState) {
-    this.row = r;
-    this.col = c;
+  constructor(row, col, initState) {
+    this.row = row;
+    this.col = col;
     this.id = this.row + '-' + this.col;
     this.setState(initState);
   }
@@ -175,7 +157,7 @@ const Cell = class {
    * @returns {number} the number of neighbours at given state
    */
   numNeighAt(state) {
-    return this.neighbours.reduce((a, c) => a + (c.state == state ? 1 : 0), 0);
+    return this.neighbours.reduce((a, cell) => a + (cell.state == state ? 1 : 0), 0);
   }
 };
 

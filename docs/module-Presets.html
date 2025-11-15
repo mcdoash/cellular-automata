@@ -5,7 +5,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cellular Automata Cell</title>
+  <title>Cellular Automata Presets</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -90,8 +90,8 @@
         <div class="core" id="main-content-wrapper">
             <div class="content">
                 <header class="page-title">
-                    <p>Class</p>
-                    <h1>Cell</h1>
+                    <p>Module</p>
+                    <h1>Presets</h1>
                 </header>
                 
 
@@ -102,9 +102,8 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Cell<span class="signature">(row, col, initState)</span><span class="type-signature"></span></h2>
         
-            <div class="class-description"><p>Class representing a cell in a CA</p></div>
+            
         
     
 </header>
@@ -113,284 +112,22 @@
     <div class="container-overview">
     
         
-            <div class='vertical-section'>
-                <div class="members">
-                    <div class="member">
-                        <div class=name>
-                            <span class="tag">Constructor</span>
-                        </div>
-                        
-
-
-    
-    <h4 class="name" id="Cell">
-        <a class="href-link" href="#Cell">#</a>
+            <div class="description"><p>Define a list of pre-set cellular automata for demonstration</p></div>
         
-        <span class="code-name">
-            
-                new Cell<span class="signature">(row, col, initState)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>row</code></td>
-  
-
-  <td class="type">
-  
-      
-<code class="param-type">number</code>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>the row position</p></td>
-</tr>
-
-
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>col</code></td>
-  
-
-  <td class="type">
-  
-      
-<code class="param-type">number</code>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>the column position</p></td>
-</tr>
-
-
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>initState</code></td>
-  
-
-  <td class="type">
-  
-      
-<code class="param-type">string</code>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>the initial state</p></td>
-</tr>
-
-
-        
-        </tbody>
-    </table>
-</div>
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-<div class="table-container">
-    <table class="props table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        
-            
-<tr class="deep-level-0">
-    
-        <td class="name"><code>row</code></td>
-    
-
-    <td class="type">
-    
-        
-<code class="param-type">number</code>
-
-
-    
-    </td>
-
-    
-
-    
-
-    <td class="description last"><p>the row position of a cell</p></td>
-</tr>
 
         
             
-<tr class="deep-level-0">
-    
-        <td class="name"><code>col</code></td>
-    
-
-    <td class="type">
-    
-        
-<code class="param-type">number</code>
 
 
-    
-    </td>
-
-    
-
-    
-
-    <td class="description last"><p>the column position of a cell</p></td>
-</tr>
-
-        
-            
-<tr class="deep-level-0">
-    
-        <td class="name"><code>id</code></td>
-    
-
-    <td class="type">
-    
-        
-<code class="param-type">string</code>
 
 
-    
-    </td>
-
-    
-
-    
-
-    <td class="description last"><p>the matching grid cell's id</p></td>
-</tr>
-
-        
-            
-<tr class="deep-level-0">
-    
-        <td class="name"><code>state</code></td>
-    
-
-    <td class="type">
-    
-        
-<code class="param-type">string</code>
 
 
-    
-    </td>
-
-    
-
-    
-
-    <td class="description last"><p>the cell's current state</p></td>
-</tr>
-
-        
-            
-<tr class="deep-level-0">
-    
-        <td class="name"><code>neighbours</code></td>
-    
-
-    <td class="type">
-    
-        
-<code class="param-type">Array.&lt;<a href="Cell.html">Cell</a>></code>
 
 
-    
-    </td>
 
-    
 
-    
 
-    <td class="description last"><p>list of the cell's neighbours</p></td>
-</tr>
-
-        
-        </tbody>
-    </table>
-</div>
 
 
 
@@ -427,9 +164,9 @@
 
     
         <p class="tag-source">
-            <a href="automata.mjs.html" class="button">View Source</a>
+            <a href="presets.mjs.html" class="button">View Source</a>
             <span>
-                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line130">line 130</a>
+                <a href="presets.mjs.html">presets.mjs</a>, <a href="presets.mjs.html#line3">line 3</a>
             </span>
         </p>
     
@@ -456,9 +193,6 @@
 
 
 
-                    </div>
-                </div>
-            </div>
         
     
     </div>
@@ -486,12 +220,16 @@
 
 
     
-    <h4 class="name" id="numNeighAt">
-        <a class="href-link" href="#numNeighAt">#</a>
+    <h4 class="name" id="~caveAutomata">
+        <a class="href-link" href="#~caveAutomata">#</a>
+        
+            
+                <span class='tag'>inner</span>
+            
         
         <span class="code-name">
             
-                numNeighAt<span class="signature">(state)</span><span class="type-signature"> &rarr; {number}</span>
+                caveAutomata<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="CA.html">CA</a>}</span>
             
         </span>
     </h4>
@@ -500,7 +238,7 @@
     
     
     <div class="description">
-        <p>Get the number of the cell's neighbours at a given state</p>
+        <p>Create a cellular automata that generates cave-like structures</p>
     </div>
     
 
@@ -511,57 +249,6 @@
 
 
 
-
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>state</code></td>
-  
-
-  <td class="type">
-  
-      
-<code class="param-type">string</code>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>the state to check</p></td>
-</tr>
-
-
-        
-        </tbody>
-    </table>
-</div>
 
 
 
@@ -600,9 +287,9 @@
 
     
         <p class="tag-source">
-            <a href="automata.mjs.html" class="button">View Source</a>
+            <a href="presets.mjs.html" class="button">View Source</a>
             <span>
-                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line153">line 153</a>
+                <a href="presets.mjs.html">presets.mjs</a>, <a href="presets.mjs.html#line8">line 8</a>
             </span>
         </p>
     
@@ -633,13 +320,13 @@
 
 <div class="columns">
     
-    <div class='param-desc column is-7'><p>the number of neighbours at given state</p></div>
+    <div class='param-desc column is-7'><p>CA that generates caves</p></div>
     
     
     <div class='column is-5 has-text-left'>
         <label>Type: </label>
         
-<code class="param-type">number</code>
+<code class="param-type"><a href="CA.html">CA</a></code>
 
 
     </div>
@@ -659,12 +346,16 @@
 
 
     
-    <h4 class="name" id="setState">
-        <a class="href-link" href="#setState">#</a>
+    <h4 class="name" id="~designAutomata">
+        <a class="href-link" href="#~designAutomata">#</a>
+        
+            
+                <span class='tag'>inner</span>
+            
         
         <span class="code-name">
             
-                setState<span class="signature">(newState)</span><span class="type-signature"></span>
+                designAutomata<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="CA.html">CA</a>}</span>
             
         </span>
     </h4>
@@ -673,7 +364,260 @@
     
     
     <div class="description">
-        <p>Set the cell's state and update the matching grid cell</p>
+        <p>An automata that creates interesting patterns.
+Starts from a specific set of states.</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="presets.mjs.html" class="button">View Source</a>
+            <span>
+                <a href="presets.mjs.html">presets.mjs</a>, <a href="presets.mjs.html#line96">line 96</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>M design generator automata</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type"><a href="CA.html">CA</a></code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="~gameOfLife">
+        <a class="href-link" href="#~gameOfLife">#</a>
+        
+            
+                <span class='tag'>inner</span>
+            
+        
+        <span class="code-name">
+            
+                gameOfLife<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="CA.html">CA</a>}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Replicate Conway's Game of Life</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="presets.mjs.html" class="button">View Source</a>
+            <span>
+                <a href="presets.mjs.html">presets.mjs</a>, <a href="presets.mjs.html#line56">line 56</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>M Game of Life CA</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<code class="param-type"><a href="CA.html">CA</a></code>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="~setBoundaryWalls">
+        <a class="href-link" href="#~setBoundaryWalls">#</a>
+        
+            
+                <span class='tag'>inner</span>
+            
+        
+        <span class="code-name">
+            
+                setBoundaryWalls<span class="signature">(M)</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Turn every cell at a boundary off to similate walls on a map</p>
     </div>
     
 
@@ -711,13 +655,13 @@
             
 <tr class="deep-level-0">
   
-      <td class="name"><code>newState</code></td>
+      <td class="name"><code>M</code></td>
   
 
   <td class="type">
   
       
-<code class="param-type">string</code>
+<code class="param-type"><a href="CA.html">CA</a></code>
 
 
   
@@ -727,7 +671,7 @@
 
   
 
-  <td class="description last"><p>the state to change to</p></td>
+  <td class="description last"><p>CA to add boundary walls to</p></td>
 </tr>
 
 
@@ -773,9 +717,9 @@
 
     
         <p class="tag-source">
-            <a href="automata.mjs.html" class="button">View Source</a>
+            <a href="presets.mjs.html" class="button">View Source</a>
             <span>
-                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line143">line 143</a>
+                <a href="presets.mjs.html">presets.mjs</a>, <a href="presets.mjs.html#line38">line 38</a>
             </span>
         </p>
     
