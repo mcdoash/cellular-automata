@@ -36,7 +36,8 @@ module.exports = defineConfig([
           ]
         },
         { exceptAfterOverload: true }
-      ]
+      ],
+      'jsdoc/reject-function-type': 'off'
     }
   }
 ]);

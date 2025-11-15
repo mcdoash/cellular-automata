@@ -49,8 +49,8 @@ function setup() {
     M.randomizeStates(probability);
     resetAnimation();
 
-    if (automataType == 'Caves') {
-      Presets.setBoundaryWalls(M);
+    if (automataType == 'Cave Generation') {
+      Presets.helpers.setBoundaryWalls(M);
     }
   });
   // Set iterate & stabilize buttons
@@ -68,24 +68,19 @@ function setup() {
     $('#grid').css('gap', this.checked ? 1 : 0 + 'px');
   });
 
-  // Automata presets
-  $('button#cave').on('click', () => {
-    resetAnimation();
-    automataType = 'Caves';
-    M = Presets.caveGeneration();
-    setupGrid();
-  });
-  $('button#life').on('click', () => {
-    resetAnimation();
-    automataType = 'Game of Life';
-    M = Presets.gameOfLife();
-    setupGrid();
-  });
-  $('button#design').on('click', () => {
-    resetAnimation();
-    automataType = 'Design Generator';
-    M = Presets.designAutomata();
-    setupGrid();
+  // Create a button for each automata preset
+  Presets.automata.forEach((preset) => {
+    const presetBtn = $('<button>').text(preset.name);
+
+    // Generate the preset and display it
+    presetBtn.on('click', () => {
+      resetAnimation();
+      automataType = preset.name;
+      M = preset.generate();
+      setupGrid();
+    });
+
+    $('#presets').append(presetBtn);
   });
 
   // New automata form

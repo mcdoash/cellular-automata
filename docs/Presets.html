@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +5,7 @@
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Cellular Automata presets.mjs</title>
+  <title>Cellular Automata Presets</title>
 
   <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -92,193 +90,345 @@
         <div class="core" id="main-content-wrapper">
             <div class="content">
                 <header class="page-title">
-                    <p>Source</p>
-                    <h1>presets.mjs</h1>
+                    <p>Namespace</p>
+                    <h1>Presets</h1>
                 </header>
                 
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>import { CA } from './automata.mjs';
+        <h2>Presets</h2>
+        
+    
+</header>
 
-/**
- * Define a list of pre-set cellular automata for demonstration
- * @namespace Presets
- */
-const Presets = {
-  /**
-   * List of automata presets
-   * @member {Array.&lt;object>} Presets.automata
-   * @property {string} name the name of the automata
-   * @property {Function} generate the automata generation function
-   */
-  automata: [
-    {
-      name: 'Cave Generation',
-      generate: caveGeneration
-    },
-    {
-      name: 'Game of Life',
-      generate: gameOfLife
-    },
-    {
-      name: 'Design',
-      generate: designAutomata
-    }
-  ],
-  /**
-   * Helper functions for creating preset automata
-   * @member {Array.&lt;Function>} Presets.helpers
-   */
-  helpers: {
-    setBoundaryWalls
-  }
-};
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Define a list of pre-set cellular automata for demonstration</p></div>
+        
 
-/**
- * Create a cellular automata that generates cave-like structures
- * @function caveAutomata
- * @returns {CA} CA that generates caves
- */
-function caveGeneration() {
-  const rowNum = 100, colNum = 100;
-  const states = ['on', 'off'];
+        
 
-  const onRule = {
-    startState: 'off',
-    neighState: 'on',
-    threshold: 5,
-    endState: 'on'
-  };
-  const offRule = {
-    startState: 'on',
-    neighState: 'off',
-    threshold: 6,
-    endState: 'off'
-  };
 
-  const M = new CA(rowNum, colNum, states, [onRule, offRule]);
-  M.randomizeStates(0.45);
-  // Set all boundaries to "walls"
-  setBoundaryWalls(M);
+<dl class="details">
 
-  return M;
-}
+    
 
-/**
- * Replicate Conway's Game of Life
- * @function gameOfLife
- * @returns {CA} M Game of Life CA
- */
-function gameOfLife() {
-  const rowNum = 100, colNum = 100;
-  const states = ['on', 'off'];
+    
 
-  const rules = [{
-    // Underpopulation
-    startState: 'on',
-    neighState: 'off',
-    threshold: 7,
-    endState: 'off'
-  },
-  { // Overpopulation
-    startState: 'on',
-    neighState: 'on',
-    threshold: 4,
-    endState: 'off'
-  },
-  { // Reproduction
-    startState: 'off',
-    neighState: 'on',
-    threshold: 3,
-    endState: 'on'
-  },
-  { // Reproduction
-    startState: 'off',
-    neighState: 'on',
-    threshold: 4,
-    endState: 'off'
-  }];
+    
 
-  const M = new CA(rowNum, colNum, states, rules);
-  M.randomizeStates(0.2);
-  return M;
-}
+    
 
-/**
- * An automata that creates interesting patterns.
- * Starts from a specific set of states.
- * @function designAutomata
- * @returns {CA} M design generator automata
- */
-function designAutomata() {
-  const rowNum = 100, colNum = 100;
-  const states = ['on', 'off'];
+    
 
-  const rules = [{
-    startState: 'on',
-    neighState: 'off',
-    threshold: 7,
-    endState: 'off'
-  },
-  {
-    startState: 'on',
-    neighState: 'on',
-    threshold: 4,
-    endState: 'off'
-  },
-  {
-    startState: 'off',
-    neighState: 'on',
-    threshold: 2,
-    endState: 'on'
-  },
-  {
-    startState: 'off',
-    neighState: 'on',
-    threshold: 4,
-    endState: 'off'
-  }];
+    
 
-  const M = new CA(rowNum, colNum, states, rules);
+    
 
-  // Create initial pattern
-  M.cells.forEach((row) => {
-    row.forEach(cell => cell.setState('off'));
-  });
-  M.cells[48][50].setState('on');
-  M.cells[50][48].setState('on');
-  M.cells[50][52].setState('on');
-  M.cells[52][50].setState('on');
+    
 
-  return M;
-}
+    
 
-/**
- * Turn every cell at a boundary off to similate walls on a map
- * @function setBoundaryWalls
- * @param {CA} M CA to add boundary walls to
- */
-function setBoundaryWalls(M) {
-  // Set all top/bottom rows off
-  for (let c = 0; c &lt; M.colNum; c++) {
-    M.cells[0][c].setState('off');
-    M.cells[M.rowNum - 1][c].setState('off');
-  }
-  // Set first/last columns off
-  for (let r = 0; r &lt; M.rowNum; r++) {
-    M.cells[r][0].setState('off');
-    M.cells[r][M.colNum - 1].setState('off');
-  }
-}
+    
 
-export { Presets };
-</code></pre>
-        </article>
-    </section>
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="presets.mjs.html" class="button">View Source</a>
+            <span>
+                <a href="presets.mjs.html">presets.mjs</a>, <a href="presets.mjs.html#line3">line 3</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+        
+    
+    </div>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class='vertical-section'>
+            <h1>Members</h1>
+            <div class="members">
+            
+                <div class="member">
+
+    <span class="method-parameter is-pulled-right">
+        <label>Type:</label>
+        
+<code class="param-type">Array.&lt;object></code>
+
+
+    </span>
+
+<h4 class="name" id=".automata">
+    <a class="href-link" href="#.automata">#</a>
+    
+        
+            <span class='tag'>static</span>
+        
+    
+    <span class="code-name">
+        automata
+    </span>
+    
+</h4>
+
+
+
+
+<div class="description">
+    <p>List of automata presets</p>
+</div>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+<div class="table-container">
+    <table class="props table">
+        <thead>
+        <tr>
+            
+            <th>Name</th>
+            
+
+            <th>Type</th>
+
+            
+
+            
+
+            <th class="last">Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>name</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">string</code>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>the name of the automata</p></td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>generate</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">function</code>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>the automata generation function</p></td>
+</tr>
+
+        
+        </tbody>
+    </table>
+</div>
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="presets.mjs.html" class="button">View Source</a>
+            <span>
+                <a href="presets.mjs.html">presets.mjs</a>, <a href="presets.mjs.html#line8">line 8</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+    <span class="method-parameter is-pulled-right">
+        <label>Type:</label>
+        
+<code class="param-type">Array.&lt;function()></code>
+
+
+    </span>
+
+<h4 class="name" id=".helpers">
+    <a class="href-link" href="#.helpers">#</a>
+    
+        
+            <span class='tag'>static</span>
+        
+    
+    <span class="code-name">
+        helpers
+    </span>
+    
+</h4>
+
+
+
+
+<div class="description">
+    <p>Helper functions for creating preset automata</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="presets.mjs.html" class="button">View Source</a>
+            <span>
+                <a href="presets.mjs.html">presets.mjs</a>, <a href="presets.mjs.html#line28">line 28</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+</div>
+            
+            </div>
+        </div>
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

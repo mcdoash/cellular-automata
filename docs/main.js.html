@@ -85,7 +85,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-Presets.html">Presets</a></li></ul><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li><li><a href="Cell.html">Cell</a></li></ul><h3>Global</h3><ul><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupElements">setupElements</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Namespaces</h3><ul><li><a href="Presets.html">Presets</a></li></ul><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li><li><a href="Cell.html">Cell</a></li></ul><h3>Global</h3><ul><li><a href="global.html#caveAutomata">caveAutomata</a></li><li><a href="global.html#designAutomata">designAutomata</a></li><li><a href="global.html#gameOfLife">gameOfLife</a></li><li><a href="global.html#setBoundaryWalls">setBoundaryWalls</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupElements">setupElements</a></li></ul></div>
                 
             </nav>
         </div>
@@ -153,8 +153,8 @@ function setup() {
     M.randomizeStates(probability);
     resetAnimation();
 
-    if (automataType == 'Caves') {
-      Presets.setBoundaryWalls(M);
+    if (automataType == 'Cave Generation') {
+      Presets.helpers.setBoundaryWalls(M);
     }
   });
   // Set iterate &amp; stabilize buttons
@@ -172,24 +172,21 @@ function setup() {
     $('#grid').css('gap', this.checked ? 1 : 0 + 'px');
   });
 
-  // Automata presets
-  $('button#cave').on('click', () => {
+  // Set up automata preset
+  const createPreset = function (preset) {
     resetAnimation();
-    automataType = 'Caves';
-    M = Presets.caveGeneration();
+    automataType = preset.name;
+    M = preset.generate();
     setupGrid();
-  });
-  $('button#life').on('click', () => {
-    resetAnimation();
-    automataType = 'Game of Life';
-    M = Presets.gameOfLife();
-    setupGrid();
-  });
-  $('button#design').on('click', () => {
-    resetAnimation();
-    automataType = 'Design Generator';
-    M = Presets.designAutomata();
-    setupGrid();
+  };
+
+  // Create a button for each preset
+  Presets.automata.forEach((preset) => {
+    const presetBtn = $('&lt;button>').text(preset.name);
+    presetBtn.on('click', () => {
+      createPreset(preset);
+    });
+    $('#presets').append(presetBtn);
   });
 
   // New automata form
