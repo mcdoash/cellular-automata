@@ -58,12 +58,8 @@ body {
 
   #grid {
     width: 95vh;
-    height: 95vh;
     padding: 10px;
     display: grid;
-    // gap: 2px;
-    // overflow: scroll;
-    // resize: both;
 
     div {
       &.off {

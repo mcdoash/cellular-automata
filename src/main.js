@@ -132,8 +132,11 @@ function setupGrid() {
 
   // Setup empty grid element
   const grid = $('#grid').empty();
-  grid.css('grid-template-columns', (100 / M.colNum + 'fr ').repeat(M.colNum));
-  grid.css('grid-template-rows', (100 / M.rowNum + 'fr ').repeat(M.rowNum));
+  const totalWidth = grid.css('width');
+  const cellSize = parseInt(totalWidth) / M.colNum;
+
+  grid.css('grid-template-columns', (cellSize + 'px ').repeat(M.colNum));
+  grid.css('grid-template-rows', (cellSize + 'px ').repeat(M.rowNum));
 
   // Init all grid cells
   for (let r = 0; r < M.rowNum; r++) {
