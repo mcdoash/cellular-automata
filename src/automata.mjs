@@ -14,16 +14,11 @@ const CA = class {
   constructor(cols, rule) {
     this.colNum = cols;
     this.rule = rule;
-    this.cells = [];
     this.iteration = 0;
 
-    // Init cells
-    for (let c = 0; c < this.colNum; c++) {
-      this.cells[c] = new Cell(c);
-    }
-
-    // Set middle cell to on
-    this.cells[Math.floor(this.colNum / 2)].setState(1);
+    // Create cells with all but middle off
+    this.cells = [...new Array(this.colNum)].map(() => 0);
+    this.cells[Math.floor(this.colNum / 2)] = 1;
   }
 
   /**
@@ -36,55 +31,21 @@ const CA = class {
 
     // Iterate over each rule per cells
     for (let i = 0; i < this.colNum; i++) {
-      const l = this.cells[(i - 1 + this.colNum) % this.colNum].state;
-      const s = this.cells[i].state;
-      const r = this.cells[(i + 1) % this.colNum].state;
+      const l = this.cells[(i - 1 + this.colNum) % this.colNum];
+      const s = this.cells[i];
+      const r = this.cells[(i + 1) % this.colNum];
 
       let n = `${l}${s}${r}`;
       n = parseInt(n, 2);
 
-      changedCells.push({
-        cell: i,
-        state: parseInt(this.rule[n])
-      });
+      changedCells.push(parseInt(this.rule[n]));
     }
 
     // Actually change states after iteration
-    changedCells.forEach(change => this.cells[change.cell].setState(change.state));
-
+    this.cells = changedCells;
     this.iteration++;
 
     return changedCells.length != 0;
-  }
-};
-
-/**
- * Class representing a cell in a CA
- * @property {number} row the row position of a cell
- * @property {number} col the column position of a cell
- * @property {string} id the matching grid cell's id
- * @property {string} state the cell's current state
- * @property {Array.<Cell>} neighbours list of the cell's neighbours
- */
-const Cell = class {
-  /**
-   * @param {number} col the column position
-   */
-  constructor(col) {
-    this.col = col;
-    this.id = this.col;
-    this.setState(0); // Start off
-  }
-
-  /**
-   * Set the cell's state and update the matching grid cell
-   * @function Cell#setState
-   * @param {string} newState the state to change to
-   */
-  setState(newState) {
-    this.state = newState;
-    const newClass = this.state ? 'on' : 'off';
-    $('#' + this.id).attr('class', newClass);
   }
 };
 

@@ -97,7 +97,7 @@ function drawRow() {
 
   // Init all grid cells
   for (let c = 0; c < M.colNum; c++) {
-    ctx.fillStyle = M.cells[c].state ? 'white' : 'black';
+    ctx.fillStyle = M.cells[c] ? 'white' : 'black';
     ctx.fillRect((cellSize * c), M.iteration * cellSize, cellSize, cellSize);
   }
 }
