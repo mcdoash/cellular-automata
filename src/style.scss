@@ -1,20 +1,11 @@
 body {
   font-size: 1.75rem;
   color: white;
-  background-color: #787878;
-}
-
-#presets {
-  margin-bottom: 2%;
-  float: left;
-
-  button {
-    display: block;
-    margin-top: 15px;
-  }
+  background-color: #626262;
 }
 
 #new-automata {
+  padding: 2%;
   float: right;
 
   form#create-ca {
@@ -24,29 +15,17 @@ body {
     color: black;
     background-color: #d9d9d9;
 
-    p {
-      font-size: 1.25rem;
-    }
+    p { font-size: 1.25rem; }
     .form-input { margin-bottom: 5px; }
     label { margin-right: 1rem; }
-    input:not([type='submit']), select { float: right; }
-    fieldset {
-      width: 80%;
-      margin-top: 15px;
-      legend { font-weight: bold; }
-    }
-
-    .rule {
-      margin-bottom: 15px;
-      padding: 10px;
-      background-color: rgba($color: white, $alpha: 0.5);
-    }
+    input:not([type='submit']) { float: right; }
   }
 }
 
-#automata {
+#info {
+  padding: 2%;
+  float: left;
   display: none;
-  clear: both;
 
   #automata-title {
     font-size: 2rem;
@@ -55,19 +34,26 @@ body {
     text-decoration: underline;
   }
   p { margin: 0; }
+}
+
+#automata {
+  display: none;
+  padding: 2%;
+  clear: both;
+
+  #menu {
+    padding: 10px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    color: black;
+    background-color: #d9d9d9;
+
+    #iterate { float: right; }
+  }
 
   #grid {
-    width: 95vh;
-    padding: 10px;
-    display: grid;
-
-    div {
-      &.off {
-        background-color: black;
-      }
-      &.on {
-        background-color: white;
-      }
-    }
+    width: 100%;
+    image-rendering: pixelated;
   }
 }

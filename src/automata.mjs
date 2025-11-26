@@ -8,63 +8,22 @@
  */
 const CA = class {
   /**
-   * @param {number} rows the number of rows
    * @param {number} cols the number of columns
-   * @param {Array} states set of CA states
-   * @param {object[]} rules set of rules
+   * @param {object[]} rule rule as a binary string
    */
-  constructor(rows, cols, states, rules) {
-    this.rowNum = rows;
+  constructor(cols, rule) {
     this.colNum = cols;
-    this.states = states;
-    this.rules = rules;
+    this.rule = rule;
     this.cells = [];
+    this.iteration = 0;
 
     // Init cells
-    for (let r = 0; r < this.rowNum; r++) {
-      this.cells[r] = [];
-      for (let c = 0; c < this.colNum; c++) {
-        this.cells[r][c] = new Cell(r, c, this.states[0]);
-      }
+    for (let c = 0; c < this.colNum; c++) {
+      this.cells[c] = new Cell(c);
     }
-    this.calcNeighbours();
-  }
 
-  /**
-   * Calculate and assign the neighbours of each cell
-   * @function CA#calcNeighbours
-   * @todo more efficient method
-   * @todo store cell indices rather than cell itself?
-   */
-  calcNeighbours() {
-    for (let row = 0; row < this.rowNum; row++) {
-      for (let col = 0; col < this.colNum; col++) {
-        let neighbours = [];
-
-        for (let i = row - 1; i <= row + 1; i++) {
-          for (let j = col - 1; j <= col + 1; j++) {
-            if ((i != row || j != col) && i >= 0 && i < this.rowNum && j >= 0 && j < this.colNum) {
-              neighbours.push(this.cells[i][j]);
-            }
-          }
-        }
-        this.cells[row][col].neighbours = neighbours;
-      }
-    }
-  }
-
-  /**
-   * Randomize the state of every cell in the CA
-   * @function CA#randomizeStates
-   * @param {number} onProb probability of a state being 'on'
-   */
-  randomizeStates(onProb = 0.45) {
-    for (let r = 0; r < this.rowNum; r++) {
-      for (let c = 0; c < this.colNum; c++) {
-        const prob = Math.random(); // [0-1]
-        this.cells[r][c].setState(prob <= onProb ? 'on' : 'off');
-      }
-    }
+    // Set middle cell to on
+    this.cells[Math.floor(this.colNum / 2)].setState(1);
   }
 
   /**
@@ -76,46 +35,26 @@ const CA = class {
     let changedCells = [];
 
     // Iterate over each rule per cells
-    this.cells.forEach((row) => {
-      row.forEach((cell) => {
-        this.rules.forEach((rule) => {
-          // If enough neighbours are at the rule's start state, cell will have rule's end state
-          if (cell.state == rule.startState && cell.numNeighAt(rule.neighState) >= rule.threshold) {
-            changedCells.push({
-              cell: cell,
-              state: rule.endState
-            });
-          }
-        });
+    for (let i = 0; i < this.colNum; i++) {
+      const l = this.cells[(i - 1 + this.colNum) % this.colNum].state;
+      const s = this.cells[i].state;
+      const r = this.cells[(i + 1) % this.colNum].state;
+
+      let n = `${l}${s}${r}`;
+      n = parseInt(n, 2);
+
+      changedCells.push({
+        cell: i,
+        state: parseInt(this.rule[n])
       });
-    });
+    }
 
     // Actually change states after iteration
-    changedCells.forEach(change => change.cell.setState(change.state));
+    changedCells.forEach(change => this.cells[change.cell].setState(change.state));
+
+    this.iteration++;
 
     return changedCells.length != 0;
-  }
-
-  /**
-   * Iterate until stable -- when no states have changed
-   * @function CA#stabilize
-   * @todo only change cell class once?
-   */
-  stabilize() {
-    let iterations = 0;
-    let change = true;
-
-    while (change && iterations < 100) {
-      change = this.iterate();
-      iterations++;
-    }
-
-    if (!change) {
-      alert('Stabilized in ' + (iterations - 1) + ' iterations');
-    }
-    else {
-      alert('Failed to stabilize after ' + iterations + ' iterations');
-    }
   }
 };
 
@@ -129,15 +68,12 @@ const CA = class {
  */
 const Cell = class {
   /**
-   * @param {number} row the row position
    * @param {number} col the column position
-   * @param {string} initState the initial state
    */
-  constructor(row, col, initState) {
-    this.row = row;
+  constructor(col) {
     this.col = col;
-    this.id = this.row + '-' + this.col;
-    this.setState(initState);
+    this.id = this.col;
+    this.setState(0); // Start off
   }
 
   /**
@@ -147,17 +83,8 @@ const Cell = class {
    */
   setState(newState) {
     this.state = newState;
-    $('#' + this.id).attr('class', newState);
-  }
-
-  /**
-   * Get the number of the cell's neighbours at a given state
-   * @function Cell#numNeighAt
-   * @param {string} state the state to check
-   * @returns {number} the number of neighbours at given state
-   */
-  numNeighAt(state) {
-    return this.neighbours.reduce((a, cell) => a + (cell.state == state ? 1 : 0), 0);
+    const newClass = this.state ? 'on' : 'off';
+    $('#' + this.id).attr('class', newClass);
   }
 };
 

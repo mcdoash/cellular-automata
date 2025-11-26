@@ -6,120 +6,43 @@
     <title>CA</title>
   </head>
   <body>
-    <!-- Create predetermined automata -->
-    <div id="presets">
-      <span>Preset Automata: </span>
+    <div id="info">
+      <span id="automata-title">Current Automata: <span id="automata-name"></span></span>
+      <br/>
+      <p>Speed: how often to animate in seconds</p>
+      <p>Animate: iterate once per speed unit</p>
+      <p>Iterate: run rules on each cell once</p>
+      <br/>
     </div>
 
     <!-- Create a new cellular automata -->
     <div id="new-automata">
       <span>Create New Automata:</span>
-
       <form id="create-ca">
-        <div class="form-input">
-          <label for="rows">Number of rows:</label>
-          <input id="rows" name="rows" type="number" min="0" max="200" step="1" placeholder="100" required>
-        </div>
         <div class="form-input">
           <label for="cols">Number of columns:</label>
           <input id="cols" name="cols" type="number" min="0" max="200" step="1" placeholder="100" required>
         </div>
-        <!--
         <div class="form-input">
-          <label for="states">States:</label>
-          <input id="states" name="states" type="text" placeholder="on, off">
+          <label for="rule">Rule:</label>
+          <input id="rule" name="rule" type="number" min="0" max="256" step="1" placeholder="100" required>
         </div>
-        -->
-        <fieldset class="form-input">
-          <legend>Rules</legend>
-          <p>If cell is in <code>start state</code> <br/>and <code>threshold</code> neighbours <br/>at <code>neigh state</code>, change to <br/><code>end state</code></p>
-
-          <!-- List of all rules -->
-          <div id="rules-container">
-            <template id="rule">
-              <div class="rule">
-                <!-- Check if current cell is in this state -->
-                <div class="form-input">
-                  <label>Start state:</label>
-                  <select required>
-                    <option disabled selected hidden value> -- </option>
-                    <option value="on">On</option>
-                    <option value="off">Off</option>
-                  </select>
-                </div>
-
-                <!-- Check if neighbours are in this state -->
-                <div class="form-input">
-                  <label>Neigh state:</label>
-                  <select required>
-                    <option disabled selected hidden value> -- </option>
-                    <option value="on">On</option>
-                    <option value="off">Off</option>
-                  </select>
-                </div>
-
-                <!-- Number matching neighbours needed -->
-                <div class="form-input">
-                  <label>Threshold:</label>
-                  <input type="number" min="0" max="8" step="1" required>
-                </div>
-
-                <!-- Change to this state if passed -->
-                <div class="form-input">
-                  <label>End state:</label>
-                  <select required>
-                    <option disabled selected hidden value> -- </option>
-                    <option value="on">On</option>
-                    <option value="off">Off</option>
-                  </select>
-                </div>
-
-                <button class="delete-rule" type="button">Delete Rule</button>
-              </div>
-            </template>
-          </div>
-
-          <button id="add-rule" type="button">Add Rule</button>
-        </fieldset>
-
         <input id="create" type="submit" value="Create Automatata" />
       </form>
     </div>
 
     <div id="automata">
-      <span id="automata-title">Current Automata: <span id="automata-name"></span></span>
-      <br/>
-      <p>Click on a cell to toggle on/off</p>
-      <br/>
-      <sp>Randomize: set each cell randomly on/off</p>
-      <p>Iterate: run rules on each cell once</p>
-      <p>Stabilze: iterate until nothing changes</p>
-      <p>Speed: how often to animate in seconds</p>
-      <p>Animate: iterate once per speed unit</p>
-      <br/>
+      <div id="menu">
+        <!-- How often to animate -->
+        <label for="speed">Speed: </label><input id="speed" name="speed" type="number" min="0" max="100" step="0.1" value="0.1">
+        <!-- Iterate over rules once/speed -->
+        <button id="animate">Animate</button>
 
-      <!-- Set grid gap visibility -->
-      <label for="gap">Show grid lines: </label>
-      <input id="gap" name="gap" type="checkbox">
-      <br/>
+        <!-- Iterate over rules once -->
+        <button id="iterate">Iterate</button>
+      </div>
 
-      <!-- How often a randomized cell will be on -->
-      <label for="prob">'On' probability: </label><input id="prob" name="prob" type="number" min="0" max="1" step="0.01" value="0.45">
-
-      <!-- Randomized all cell states -->
-      <button id="randomize">Randomize</button>
-
-      <!-- Iterate over rules once -->
-      <button id="iterate">Iterate</button>
-      <!-- Iterate over rules until no changes -->
-      <button id="stabilize">Stabilize</button>
-
-      <!-- How often to animate -->
-       <label for="speed">Speed: </label><input id="speed" name="speed" type="number" min="0" max="100" step="0.1" value="0.5">
-      <!-- Iterate over rules once/speed -->
-      <button id="animate">Animate</button>
-
-      <div id="grid"></div>
+      <canvas id="grid"></canvas>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

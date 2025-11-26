@@ -21,6 +21,7 @@ function setup() {
     if (!animate) {
       interval = setInterval(() => {
         const change = M.iterate();
+        drawRow();
         if (!change) {
           clearInterval(interval);
           animate = false;
@@ -43,83 +44,29 @@ function setup() {
     $('button#animate').text('Animate').prop('disabled', false);
   };
 
-  // Set randomize button
-  $('button#randomize').on('click', () => {
-    const probability = $('#prob').val();
-    M.randomizeStates(probability);
-    resetAnimation();
-
-    if (automataType == 'Cave Generation') {
-      Presets.helpers.setBoundaryWalls(M);
-    }
-  });
-  // Set iterate & stabilize buttons
+  // Set iterate button
   $('button#iterate').on('click', () => {
     resetAnimation();
     M.iterate();
-  });
-  $('button#stabilize').on('click', () => {
-    resetAnimation();
-    M.stabilize();
-  });
-
-  // Turn grid lines on/off via checkbox
-  $('input#gap').on('change', function () {
-    $('#grid').css('gap', this.checked ? 1 : 0 + 'px');
-  });
-
-  // Create a button for each automata preset
-  Presets.automata.forEach((preset) => {
-    const presetBtn = $('<button>').text(preset.name);
-
-    // Generate the preset and display it
-    presetBtn.on('click', () => {
-      resetAnimation();
-      automataType = preset.name;
-      M = preset.generate();
-      setupGrid();
-    });
-
-    $('#presets').append(presetBtn);
+    drawRow();
   });
 
   // New automata form
   $('#create-ca').on('submit', function (e) {
     e.preventDefault();
     resetAnimation();
-    const rowNum = e.target.rows.value;
-    const colNum = e.target.cols.value;
+    const colNum = parseInt(e.target.cols.value);
 
-    // const states = e.target.states.value.split(',').map(i => i.trim());
-    const states = ['on', 'off'];
+    // Format rule
+    let rule = parseInt(e.target.rule.value);
+    automataType = 'Rule ' + rule;
+    rule = rule.toString(2).padStart(8, '0');
+    rule = rule.split('').reverse().join('');
 
-    // Create rules from input
-    let rules = [];
-    $('.rule').each(function () {
-      const inputs = $(this).find(':input');
-
-      rules.push({
-        startState: $(inputs[0]).val(),
-        neighState: $(inputs[1]).val(),
-        threshold: $(inputs[2]).val(),
-        endState: $(inputs[3]).val()
-      });
-    });
-
-    automataType = 'Custom';
-    M = new CA(rowNum, colNum, states, rules);
+    M = new CA(colNum, rule);
     setupGrid();
-    M.randomizeStates();
 
     return false;
-  });
-
-  // Form: new rules creation
-  $('button#add-rule').on('click', () => {
-    const newRule = $('#rule').contents().clone();
-    // Set delete button to delete this rule
-    $(newRule).children('.delete-rule').on('click', () => $(newRule).remove());
-    $('#rules-container').append(newRule);
   });
 }
 
@@ -128,30 +75,29 @@ function setup() {
  * @function setupElements
  */
 function setupGrid() {
+  // Set tall grid height for now
+  const grid = $('#grid')[0];
+  const cellSize = Math.floor(grid.width / M.colNum);
+  $('#grid').attr('width', cellSize * M.colNum * 2);
+  $('#grid').attr('height', cellSize * 1000);
+  drawRow();
+
   $('#automata-name').text(automataType);
+  $('#info').show();
+  $('#automata').show();
+}
 
+function drawRow() {
   // Setup empty grid element
-  const grid = $('#grid').empty();
-  const totalWidth = grid.css('width');
-  const cellSize = parseInt(totalWidth) / M.colNum;
-
-  grid.css('grid-template-columns', (cellSize + 'px ').repeat(M.colNum));
-  grid.css('grid-template-rows', (cellSize + 'px ').repeat(M.rowNum));
+  const grid = $('#grid')[0];
+  const ctx = grid.getContext('2d');
+  const cellSize = Math.floor(grid.width / M.colNum);
+  // Dynamically adjust height
+  // $('#grid').attr('height', cellSize * (M.iteration + 1));
 
   // Init all grid cells
-  for (let r = 0; r < M.rowNum; r++) {
-    for (let c = 0; c < M.colNum; c++) {
-      const id = M.cells[r][c].id;
-      const cell = $('<div>').attr('id', id).attr('class', M.cells[r][c].state);
-      $(grid).append(cell);
-
-      // On click, toggle a cell on/off
-      $(cell).on('click', () => {
-        let newState = M.cells[r][c].state == 'on' ? 'off' : 'on';
-        M.cells[r][c].setState(newState);
-      });
-    }
+  for (let c = 0; c < M.colNum; c++) {
+    ctx.fillStyle = M.cells[c].state ? 'white' : 'black';
+    ctx.fillRect((cellSize * c), M.iteration * cellSize, cellSize, cellSize);
   }
-
-  $('#automata').show();
 }
