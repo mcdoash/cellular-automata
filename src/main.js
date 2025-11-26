@@ -71,9 +71,48 @@ function setup() {
     $('#rule-string').text(M.rule);
     $('.info').show();
     $('#automata').show();
+    drawRule();
 
     return false;
   });
+}
+
+/**
+ *
+ */
+function drawRule() {
+  const ruleCtx = $('#rule-display')[0].getContext('2d');
+  const boxSize = 35;
+  const totalBoxes = 8 * 3;
+  const gap = 2;
+  const sep = 5 * gap;
+
+  // Set resolution
+  $('#rule-display').attr('width', (totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep));
+  $('#rule-display').attr('height', boxSize * 2 + sep);
+  ruleCtx.font = '25px serif';
+
+  let ruleNum = 1;
+  let boxNum = 0;
+
+  for (let r = 7; r >= 0; r--) {
+    // Draw rule
+    ruleCtx.fillStyle = parseInt(M.rule[r]) ? 'black' : 'white';
+    const x = ((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + gap);
+    ruleCtx.fillRect(x, (boxSize + sep), boxSize, boxSize);
+
+    // Draw state boxes
+    const neighbourhood = r.toString(2).padStart(3, '0');
+    for (let n = 0; n < 3; n++) {
+      ruleCtx.fillStyle = parseInt(neighbourhood[n]) ? 'black' : 'white';
+      const extraGap = (n == 0) ? sep : 0;
+      const x = (boxNum * boxSize) + (boxNum * gap) + ((ruleNum * sep) - extraGap) + extraGap;
+
+      ruleCtx.fillRect(x, 0, boxSize, boxSize);
+      boxNum++;
+    }
+    ruleNum++;
+  }
 }
 
 /**
@@ -103,7 +142,7 @@ function setupGrid() {
 function drawRow() {
   // Draw all cells
   for (let c = 0; c < M.colNum; c++) {
-    ctx.fillStyle = M.cells[c] ? 'white' : 'black';
+    ctx.fillStyle = M.cells[c] ? 'black' : 'white';
     ctx.fillRect((cellSize * c), M.iteration * cellSize, cellSize, cellSize);
   }
 }

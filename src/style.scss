@@ -1,13 +1,21 @@
 body {
+  padding: 2%;
   font-size: 1.75rem;
   color: white;
-  background-color: #626262;
+  background-color: #515151;
+}
+
+#top {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  overflow: hidden;
 }
 
 #new-automata {
-  padding: 2%;
-  float: right;
-
   form#create-ca {
     width: fit-content;
     margin: 2% 0;
@@ -23,12 +31,9 @@ body {
 }
 
 .info {
-  padding: 2%;
   display: none;
 
   &#ca-info {
-    float: left;
-
     #automata-title {
       font-size: 2rem;
       font-weight: bold;
@@ -38,13 +43,19 @@ body {
     p { margin: 0; }
   }
   &#rule-info {
-    clear: both;
+    margin: 2% 0 5%;
+
+    #rule-display {
+      width: calc(100% - 30px);
+      padding: 15px;
+      display: block;
+      background-color: #a0a0a0;
+    }
   }
 }
 
 #automata {
   display: none;
-  padding: 2%;
   clear: both;
 
   #menu {

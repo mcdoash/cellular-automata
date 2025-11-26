@@ -6,33 +6,35 @@
     <title>CA</title>
   </head>
   <body>
-    <div id="ca-info" class="info">
-      <span id="automata-title">Current Automata: <span id="automata-name"></span></span>
-      <br/>
-      <p>Speed: how often to animate in seconds</p>
-      <p>Animate: iterate once per speed unit</p>
-      <p>Iterate: run rules on each cell once</p>
-      <br/>
-    </div>
+    <div id="top">
+      <div id="ca-info" class="info">
+        <span id="automata-title">Current Automata: <span id="automata-name"></span></span>
+        <br/>
+        <p>Speed: how often to animate in seconds</p>
+        <p>Animate: iterate once per speed unit</p>
+        <p>Iterate: run rules on each cell once</p>
+        <br/>
+      </div>
 
-    <!-- Create a new cellular automata -->
-    <div id="new-automata">
-      <span>Create New Automata:</span>
-      <form id="create-ca">
-        <div class="form-input">
-          <label for="cols">Number of columns:</label>
-          <input id="cols" name="cols" type="number" min="0" max="200" step="1" placeholder="100" required>
-        </div>
-        <div class="form-input">
-          <label for="rule">Rule:</label>
-          <input id="rule" name="rule" type="number" min="0" max="256" step="1" placeholder="100" required>
-        </div>
-        <input id="create" type="submit" value="Create Automatata" />
-      </form>
-    </div>
+      <!-- Create a new cellular automata -->
+      <div id="new-automata">
+        <span>Create New Automata:</span>
+        <form id="create-ca">
+          <div class="form-input">
+            <label for="cols">Number of columns:</label>
+            <input id="cols" name="cols" type="number" min="0" max="200" step="1" value="101" required>
+          </div>
+          <div class="form-input">
+            <label for="rule">Rule:</label>
+            <input id="rule" name="rule" type="number" min="0" max="256" step="1" value="90" required>
+          </div>
+          <input id="create" type="submit" value="Create Automatata" />
+        </form>
+      </div>
+      </div>
 
     <div id="rule-info" class="info">
-      <span id="rule-string"></span>
+      Rule: <span id="rule-string"></span>
       <canvas id="rule-display"></canvas>
     </div>
 
