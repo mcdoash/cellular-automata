@@ -4,6 +4,10 @@ import { CA } from './automata.mjs';
 // Globals
 let M;
 let cellSize, ctx;
+// Rule display constants
+const boxSize = 35;
+const gap = 2;
+const sep = 5 * gap;
 
 setup();
 
@@ -12,6 +16,14 @@ setup();
  * @function setup
  */
 function setup() {
+  // Define canvas for drawing automaton
+  ctx = $('#grid')[0].getContext('2d');
+
+  // Set rule display resolution once
+  const totalBoxes = 8 * 3;
+  $('#rule-display').attr('width', (totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep));
+  $('#rule-display').attr('height', boxSize * 2 + sep);
+
   // Animate/stop animation button
   let animate = false;
   let interval;
@@ -82,15 +94,6 @@ function setup() {
  */
 function drawRule() {
   const ruleCtx = $('#rule-display')[0].getContext('2d');
-  const boxSize = 35;
-  const totalBoxes = 8 * 3;
-  const gap = 2;
-  const sep = 5 * gap;
-
-  // Set resolution
-  $('#rule-display').attr('width', (totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep));
-  $('#rule-display').attr('height', boxSize * 2 + sep);
-  ruleCtx.font = '25px serif';
 
   let ruleNum = 1;
   let boxNum = 0;
@@ -98,7 +101,7 @@ function drawRule() {
   for (let r = 7; r >= 0; r--) {
     // Draw rule
     ruleCtx.fillStyle = parseInt(M.rule[r]) ? 'black' : 'white';
-    const x = ((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + gap);
+    const x = Math.floor(((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + gap));
     ruleCtx.fillRect(x, (boxSize + sep), boxSize, boxSize);
 
     // Draw state boxes
@@ -106,7 +109,7 @@ function drawRule() {
     for (let n = 0; n < 3; n++) {
       ruleCtx.fillStyle = parseInt(neighbourhood[n]) ? 'black' : 'white';
       const extraGap = (n == 0) ? sep : 0;
-      const x = (boxNum * boxSize) + (boxNum * gap) + ((ruleNum * sep) - extraGap) + extraGap;
+      const x = Math.floor((boxNum * boxSize) + (boxNum * gap) + ((ruleNum * sep) - extraGap) + extraGap);
 
       ruleCtx.fillRect(x, 0, boxSize, boxSize);
       boxNum++;
@@ -122,15 +125,15 @@ function drawRule() {
  */
 function setupGrid() {
   const grid = $('#grid')[0];
+  ctx.clearRect(0, 0, grid.width, grid.height);
 
   // Setup resolution
-  cellSize = Math.floor(grid.width / M.colNum);
-  $('#grid').attr('width', cellSize * M.colNum * 2);
-  $('#grid').attr('height', cellSize * 1000);
-
-  // Set globals for faster animation
-  cellSize = Math.floor(grid.width / M.colNum);
-  ctx = $('#grid')[0].getContext('2d');
+  const newWidth = Math.floor(150 / M.colNum) * M.colNum * 2;
+  if (newWidth != grid.width) {
+    grid.width = newWidth;
+    cellSize = Math.floor(grid.width / M.colNum);
+    grid.height = cellSize * 1000;
+  }
 
   // Draw starting state
   drawRow();
