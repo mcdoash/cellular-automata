@@ -22,18 +22,24 @@ body {
   }
 }
 
-#info {
+.info {
   padding: 2%;
-  float: left;
   display: none;
 
-  #automata-title {
-    font-size: 2rem;
-    font-weight: bold;
-    font-variant: small-caps;
-    text-decoration: underline;
+  &#ca-info {
+    float: left;
+
+    #automata-title {
+      font-size: 2rem;
+      font-weight: bold;
+      font-variant: small-caps;
+      text-decoration: underline;
+    }
+    p { margin: 0; }
   }
-  p { margin: 0; }
+  &#rule-info {
+    clear: both;
+  }
 }
 
 #automata {

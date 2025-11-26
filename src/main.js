@@ -1,10 +1,10 @@
 import './style.scss';
 import { CA } from './automata.mjs';
-import { Presets } from './presets.mjs';
 
-// Global automata variables
+// Globals
 let M;
-let automataType;
+let cellSize, ctx;
+
 setup();
 
 /**
@@ -59,12 +59,18 @@ function setup() {
 
     // Format rule
     let rule = parseInt(e.target.rule.value);
-    automataType = 'Rule ' + rule;
+    const automataType = 'Rule ' + rule;
     rule = rule.toString(2).padStart(8, '0');
     rule = rule.split('').reverse().join('');
 
     M = new CA(colNum, rule);
     setupGrid();
+
+    // Set info text
+    $('#automata-name').text(automataType);
+    $('#rule-string').text(M.rule);
+    $('.info').show();
+    $('#automata').show();
 
     return false;
   });
@@ -72,30 +78,30 @@ function setup() {
 
 /**
  * Setup the html grid elements
- * @function setupElements
+ * @function setupGrid
+ * @todo dynamic grid height, better resolution
  */
 function setupGrid() {
-  // Set tall grid height for now
   const grid = $('#grid')[0];
-  const cellSize = Math.floor(grid.width / M.colNum);
+
+  // Setup resolution
+  cellSize = Math.floor(grid.width / M.colNum);
   $('#grid').attr('width', cellSize * M.colNum * 2);
   $('#grid').attr('height', cellSize * 1000);
-  drawRow();
 
-  $('#automata-name').text(automataType);
-  $('#info').show();
-  $('#automata').show();
+  // Set globals for faster animation
+  cellSize = Math.floor(grid.width / M.colNum);
+  ctx = $('#grid')[0].getContext('2d');
+
+  // Draw starting state
+  drawRow();
 }
 
+/**
+ *
+ */
 function drawRow() {
-  // Setup empty grid element
-  const grid = $('#grid')[0];
-  const ctx = grid.getContext('2d');
-  const cellSize = Math.floor(grid.width / M.colNum);
-  // Dynamically adjust height
-  // $('#grid').attr('height', cellSize * (M.iteration + 1));
-
-  // Init all grid cells
+  // Draw all cells
   for (let c = 0; c < M.colNum; c++) {
     ctx.fillStyle = M.cells[c] ? 'white' : 'black';
     ctx.fillRect((cellSize * c), M.iteration * cellSize, cellSize, cellSize);

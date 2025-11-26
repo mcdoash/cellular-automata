@@ -1,10 +1,8 @@
 /**
  * Class representing a cellular automata
- * @property {number} rowNum the number of rows
  * @property {number} colNum the number of columns
- * @property {Array.<Cell[]>} cells 2D array of cells
- * @property {Array} states finite set of states
- * @property {object[]} rules cell state transition rules
+ * @property {Array} cells 2D array of cell states
+ * @property {string} rule cell state transition rules
  */
 const CA = class {
   /**
@@ -32,13 +30,15 @@ const CA = class {
     // Iterate over each rule per cells
     for (let i = 0; i < this.colNum; i++) {
       const l = this.cells[(i - 1 + this.colNum) % this.colNum];
+      // const l = this.cells[i - 1] ?? 0;
       const s = this.cells[i];
       const r = this.cells[(i + 1) % this.colNum];
+      // const r = this.cells[i + 1] ?? 0;
 
       let n = `${l}${s}${r}`;
       n = parseInt(n, 2);
 
-      changedCells.push(parseInt(this.rule[n]));
+      changedCells[i] = parseInt(this.rule[n]);
     }
 
     // Actually change states after iteration
