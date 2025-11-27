@@ -20,14 +20,25 @@
       <div id="new-automata">
         <span>Create New Automata:</span>
         <form id="create-ca">
+
           <div class="form-input">
             <label for="cols">Number of columns:</label>
-            <input id="cols" name="cols" type="number" min="0" max="200" step="1" value="101" required>
+            <input id="cols" name="cols" type="number" min="101" max="1001" step="1" value="255" required>
           </div>
+
           <div class="form-input">
             <label for="rule">Rule:</label>
-            <input id="rule" name="rule" type="number" min="0" max="256" step="1" value="90" required>
+            <input id="rule" name="rule" type="number" min="0" max="255" step="1" value="90" required>
           </div>
+
+          <div class="form-input">
+            <label for="start">Start state:</label>
+            <select id="start" name="start" required>
+              <option value="middle" selected>Middle On</option>
+              <option value="random">Random</option>
+            </select>
+          </div>
+
           <input id="create" type="submit" value="Create Automatata" />
         </form>
       </div>
@@ -41,7 +52,7 @@
     <div id="automata">
       <div id="menu">
         <!-- How often to animate -->
-        <label for="speed">Speed: </label><input id="speed" name="speed" type="number" min="0" max="100" step="0.1" value="0.1">
+        <label for="speed">Speed: </label><input id="speed" name="speed" type="number" min="0" max="100" step="0.01" value="0.1">
         <!-- Iterate over rules once/speed -->
         <button id="animate">Animate</button>
 

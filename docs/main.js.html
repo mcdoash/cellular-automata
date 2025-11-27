@@ -85,7 +85,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Namespaces</h3><ul><li><a href="Presets.html">Presets</a></li></ul><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li><li><a href="Cell.html">Cell</a></li></ul><h3>Global</h3><ul><li><a href="global.html#caveAutomata">caveAutomata</a></li><li><a href="global.html#designAutomata">designAutomata</a></li><li><a href="global.html#gameOfLife">gameOfLife</a></li><li><a href="global.html#setBoundaryWalls">setBoundaryWalls</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupElements">setupElements</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li></ul><h3>Global</h3><ul><li><a href="global.html#drawRow">drawRow</a></li><li><a href="global.html#drawRule">drawRule</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupCavas">setupCavas</a></li></ul></div>
                 
             </nav>
         </div>
@@ -104,11 +104,12 @@
         <article>
             <pre class="prettyprint source linenums"><code>import './style.scss';
 import { CA } from './automata.mjs';
-import { Presets } from './presets.mjs';
 
-// Global automata variables
+// Globals
 let M;
-let automataType;
+let cellSize;
+let ctx;
+
 setup();
 
 /**
@@ -116,6 +117,35 @@ setup();
  * @function setup
  */
 function setup() {
+  // Define canvas for drawing automaton
+  ctx = $('#grid')[0].getContext('2d');
+
+  // New automata form
+  $('#create-ca').on('submit', function (e) {
+    e.preventDefault();
+    resetAnimation();
+    const colNum = parseInt(e.target.cols.value);
+    const startType = e.target.start.value;
+
+    // Format rule
+    let rule = parseInt(e.target.rule.value);
+    const automataType = 'Rule ' + rule;
+    rule = rule.toString(2).padStart(8, '0');
+    rule = rule.split('').reverse().join('');
+
+    M = new CA(colNum, rule, startType);
+    setupCavas();
+
+    // Set info text
+    $('#automata-name').text(automataType);
+    $('#rule-string').text(M.rule);
+    $('.info').show();
+    $('#automata').show();
+    drawRule();
+
+    return false;
+  });
+
   // Animate/stop animation button
   let animate = false;
   let interval;
@@ -124,12 +154,8 @@ function setup() {
 
     if (!animate) {
       interval = setInterval(() => {
-        const change = M.iterate();
-        if (!change) {
-          clearInterval(interval);
-          animate = false;
-          $('button#animate').text('Animation Done').prop('disabled', true);
-        }
+        M.iterate();
+        drawRow();
       }, (speed * 1000));
       $(this).text('Stop Animation');
     }
@@ -141,122 +167,96 @@ function setup() {
   });
 
   // Stop animation and reset button
-  const resetAnimation = function () {
+  const resetAnimation = () => {
     clearInterval(interval);
     animate = false;
-    $('button#animate').text('Animate').prop('disabled', false);
+    $('button#animate').text('Animate');
   };
 
-  // Set randomize button
-  $('button#randomize').on('click', () => {
-    const probability = $('#prob').val();
-    M.randomizeStates(probability);
-    resetAnimation();
-
-    if (automataType == 'Cave Generation') {
-      Presets.helpers.setBoundaryWalls(M);
-    }
-  });
-  // Set iterate &amp; stabilize buttons
+  // Set iterate button
   $('button#iterate').on('click', () => {
     resetAnimation();
     M.iterate();
-  });
-  $('button#stabilize').on('click', () => {
-    resetAnimation();
-    M.stabilize();
-  });
-
-  // Turn grid lines on/off via checkbox
-  $('input#gap').on('change', function () {
-    $('#grid').css('gap', this.checked ? 1 : 0 + 'px');
-  });
-
-  // Set up automata preset
-  const createPreset = function (preset) {
-    resetAnimation();
-    automataType = preset.name;
-    M = preset.generate();
-    setupGrid();
-  };
-
-  // Create a button for each preset
-  Presets.automata.forEach((preset) => {
-    const presetBtn = $('&lt;button>').text(preset.name);
-    presetBtn.on('click', () => {
-      createPreset(preset);
-    });
-    $('#presets').append(presetBtn);
-  });
-
-  // New automata form
-  $('#create-ca').on('submit', function (e) {
-    e.preventDefault();
-    resetAnimation();
-    const rowNum = e.target.rows.value;
-    const colNum = e.target.cols.value;
-
-    // const states = e.target.states.value.split(',').map(i => i.trim());
-    const states = ['on', 'off'];
-
-    // Create rules from input
-    let rules = [];
-    $('.rule').each(function () {
-      const inputs = $(this).find(':input');
-
-      rules.push({
-        startState: $(inputs[0]).val(),
-        neighState: $(inputs[1]).val(),
-        threshold: $(inputs[2]).val(),
-        endState: $(inputs[3]).val()
-      });
-    });
-
-    automataType = 'Custom';
-    M = new CA(rowNum, colNum, states, rules);
-    setupGrid();
-    M.randomizeStates();
-
-    return false;
-  });
-
-  // Form: new rules creation
-  $('button#add-rule').on('click', () => {
-    const newRule = $('#rule').contents().clone();
-    // Set delete button to delete this rule
-    $(newRule).children('.delete-rule').on('click', () => $(newRule).remove());
-    $('#rules-container').append(newRule);
+    drawRow();
   });
 }
 
 /**
- * Setup the html grid elements
- * @function setupElements
+ * Draw a visual representation of the current rule
+ * @function drawRule
  */
-function setupGrid() {
-  $('#automata-name').text(automataType);
+function drawRule() {
+  const ruleCtx = $('#rule-display')[0].getContext('2d');
 
-  // Setup empty grid element
-  const grid = $('#grid').empty();
-  grid.css('grid-template-columns', (100 / M.colNum + 'fr ').repeat(M.colNum));
-  grid.css('grid-template-rows', (100 / M.rowNum + 'fr ').repeat(M.rowNum));
+  const boxSize = 35;
+  const gap = 3;
+  const sep = 5 * gap;
 
-  // Init all grid cells
-  for (let r = 0; r &lt; M.rowNum; r++) {
-    for (let c = 0; c &lt; M.colNum; c++) {
-      const id = M.cells[r][c].id;
-      const cell = $('&lt;div>').attr('id', id).attr('class', M.cells[r][c].state);
-      $(grid).append(cell);
-
-      // On click, toggle a cell on/off
-      $(cell).on('click', () => {
-        let newState = M.cells[r][c].state == 'on' ? 'off' : 'on';
-        M.cells[r][c].setState(newState);
-      });
-    }
+  // Define resolution once
+  if (!$('#rule-display').attr('width')) {
+    const totalBoxes = 8 * 3;
+    $('#rule-display').attr('width', (totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep));
+    $('#rule-display').attr('height', boxSize * 2 + sep + 2);
   }
 
-  $('#automata').show();
+  let ruleNum = 1;
+  let boxNum = 0;
+
+  // Draw boxes for each neighbourhood combination
+  for (let r = 7; r >= 0; r--) {
+    // Draw rule box
+    ruleCtx.fillStyle = parseInt(M.rule[r]) ? 'black' : 'white';
+    const x = Math.floor(((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + gap));
+    ruleCtx.fillRect(x, (boxSize + sep), boxSize, boxSize);
+    ruleCtx.fillStyle = 'black';
+    ruleCtx.strokeRect(x, (boxSize + sep), boxSize, boxSize);
+
+    // Draw state boxes
+    const neighbourhood = r.toString(2).padStart(3, '0');
+    for (let n = 0; n &lt; 3; n++) {
+      ruleCtx.fillStyle = parseInt(neighbourhood[n]) ? 'black' : 'white';
+      const extraGap = (n == 0) ? sep : 0;
+      const x = Math.floor((boxNum * boxSize) + (boxNum * gap) + ((ruleNum * sep) - extraGap) + extraGap);
+      ruleCtx.fillRect(x, 0, boxSize, boxSize);
+      ruleCtx.fillStyle = 'black';
+      ruleCtx.strokeRect(x, 0, boxSize, boxSize);
+      boxNum++;
+    }
+    ruleNum++;
+  }
+}
+
+/**
+ * Setup the canvas where the automata will be drawn
+ * @function setupCavas
+ * @todo dynamic grid height, better resolution
+ */
+function setupCavas() {
+  const grid = $('#grid')[0];
+  ctx.clearRect(0, 0, grid.width, grid.height);
+
+  // Setup resolution
+  const newWidth = Math.floor(1001 / M.colNum) * M.colNum * 2;
+  if (newWidth != grid.width) {
+    grid.width = newWidth;
+    cellSize = Math.floor(grid.width / M.colNum);
+    grid.height = cellSize * 1000;
+  }
+
+  // Draw starting state
+  drawRow();
+}
+
+/**
+ * Draw the current state of the automaton as a new row in the canvas
+ * @function drawRow
+ */
+function drawRow() {
+  // Draw all cells
+  for (let c = 0; c &lt; M.colNum; c++) {
+    ctx.fillStyle = M.cells[c] ? 'black' : 'white';
+    ctx.fillRect((cellSize * c), M.iteration * cellSize, cellSize, cellSize);
+  }
 }
 </code></pre>
         </article>

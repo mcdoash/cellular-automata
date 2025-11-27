@@ -83,7 +83,7 @@
             
             <nav>
                 
-                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Namespaces</h3><ul><li><a href="Presets.html">Presets</a></li></ul><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li><li><a href="Cell.html">Cell</a></li></ul><h3>Global</h3><ul><li><a href="global.html#caveAutomata">caveAutomata</a></li><li><a href="global.html#designAutomata">designAutomata</a></li><li><a href="global.html#gameOfLife">gameOfLife</a></li><li><a href="global.html#setBoundaryWalls">setBoundaryWalls</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupElements">setupElements</a></li></ul></div>
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="CA.html">CA</a></li></ul><h3>Global</h3><ul><li><a href="global.html#drawRow">drawRow</a></li><li><a href="global.html#drawRule">drawRule</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#setupCavas">setupCavas</a></li></ul></div>
                 
             </nav>
         </div>
@@ -102,7 +102,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>CA<span class="signature">(rows, cols, states, rules)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>CA<span class="signature">(cols, rule, startType)</span><span class="type-signature"></span></h2>
         
             <div class="class-description"><p>Class representing a cellular automata</p></div>
         
@@ -128,7 +128,7 @@
         
         <span class="code-name">
             
-                new CA<span class="signature">(rows, cols, states, rules)</span><span class="type-signature"></span>
+                new CA<span class="signature">(cols, rule, startType)</span><span class="type-signature"></span>
             
         </span>
     </h4>
@@ -171,31 +171,6 @@
             
 <tr class="deep-level-0">
   
-      <td class="name"><code>rows</code></td>
-  
-
-  <td class="type">
-  
-      
-<code class="param-type">number</code>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>the number of rows</p></td>
-</tr>
-
-
-        
-
-            
-<tr class="deep-level-0">
-  
       <td class="name"><code>cols</code></td>
   
 
@@ -221,32 +196,7 @@
             
 <tr class="deep-level-0">
   
-      <td class="name"><code>states</code></td>
-  
-
-  <td class="type">
-  
-      
-<code class="param-type">Array</code>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>set of CA states</p></td>
-</tr>
-
-
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>rules</code></td>
+      <td class="name"><code>rule</code></td>
   
 
   <td class="type">
@@ -262,7 +212,32 @@
 
   
 
-  <td class="description last"><p>set of rules</p></td>
+  <td class="description last"><p>rule as a binary string</p></td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>startType</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>starting state, either 'middle' or 'random'</p></td>
 </tr>
 
 
@@ -301,29 +276,6 @@
             
 <tr class="deep-level-0">
     
-        <td class="name"><code>rowNum</code></td>
-    
-
-    <td class="type">
-    
-        
-<code class="param-type">number</code>
-
-
-    
-    </td>
-
-    
-
-    
-
-    <td class="description last"><p>the number of rows</p></td>
-</tr>
-
-        
-            
-<tr class="deep-level-0">
-    
         <td class="name"><code>colNum</code></td>
     
 
@@ -353,29 +305,6 @@
     <td class="type">
     
         
-<code class="param-type">Array.&lt;Array.&lt;<a href="Cell.html">Cell</a>>></code>
-
-
-    
-    </td>
-
-    
-
-    
-
-    <td class="description last"><p>2D array of cells</p></td>
-</tr>
-
-        
-            
-<tr class="deep-level-0">
-    
-        <td class="name"><code>states</code></td>
-    
-
-    <td class="type">
-    
-        
 <code class="param-type">Array</code>
 
 
@@ -386,20 +315,20 @@
 
     
 
-    <td class="description last"><p>finite set of states</p></td>
+    <td class="description last"><p>2D array of cell states</p></td>
 </tr>
 
         
             
 <tr class="deep-level-0">
     
-        <td class="name"><code>rules</code></td>
+        <td class="name"><code>rule</code></td>
     
 
     <td class="type">
     
         
-<code class="param-type">Array.&lt;object></code>
+<code class="param-type">string</code>
 
 
     
@@ -410,6 +339,29 @@
     
 
     <td class="description last"><p>cell state transition rules</p></td>
+</tr>
+
+        
+            
+<tr class="deep-level-0">
+    
+        <td class="name"><code>iteration</code></td>
+    
+
+    <td class="type">
+    
+        
+<code class="param-type">number</code>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>current time step</p></td>
 </tr>
 
         
@@ -454,7 +406,7 @@
         <p class="tag-source">
             <a href="automata.mjs.html" class="button">View Source</a>
             <span>
-                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line9">line 9</a>
+                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line8">line 8</a>
             </span>
         </p>
     
@@ -511,12 +463,12 @@
 
 
     
-    <h4 class="name" id="calcNeighbours">
-        <a class="href-link" href="#calcNeighbours">#</a>
+    <h4 class="name" id="iterate">
+        <a class="href-link" href="#iterate">#</a>
         
         <span class="code-name">
             
-                calcNeighbours<span class="signature">()</span><span class="type-signature"></span>
+                iterate<span class="signature">()</span><span class="type-signature"></span>
             
         </span>
     </h4>
@@ -525,7 +477,7 @@
     
     
     <div class="description">
-        <p>Calculate and assign the neighbours of each cell</p>
+        <p>Update all cells via rule</p>
     </div>
     
 
@@ -570,15 +522,6 @@
 
     
 
-    
-    <dt class="tag-todo">To Do:</dt>
-    <dd class="tag-todo">
-        <ul>
-            <li>more efficient method</li>
-        
-            <li>store cell indices rather than cell itself?</li>
-        </ul>
-    </dd>
     
 
     
@@ -586,380 +529,6 @@
             <a href="automata.mjs.html" class="button">View Source</a>
             <span>
                 <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line33">line 33</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="iterate">
-        <a class="href-link" href="#iterate">#</a>
-        
-        <span class="code-name">
-            
-                iterate<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>Apply rules</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="automata.mjs.html" class="button">View Source</a>
-            <span>
-                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line70">line 70</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
-            
-                    
-
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>if the iteration created a change in state</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
-        
-<code class="param-type">boolean</code>
-
-
-    </div>
-    
-</div>
-
-                
-        </div>
-    </div>
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="randomizeStates">
-        <a class="href-link" href="#randomizeStates">#</a>
-        
-        <span class="code-name">
-            
-                randomizeStates<span class="signature">(onProb)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>Randomize the state of every cell in the CA</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-<div class="table-container">
-    <table class="params table">
-        <thead>
-        <tr>
-            
-            <th>Name</th>
-            
-
-            <th>Type</th>
-
-            
-
-            
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        
-
-            
-<tr class="deep-level-0">
-  
-      <td class="name"><code>onProb</code></td>
-  
-
-  <td class="type">
-  
-      
-<code class="param-type">number</code>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>probability of a state being 'on'</p></td>
-</tr>
-
-
-        
-        </tbody>
-    </table>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="automata.mjs.html" class="button">View Source</a>
-            <span>
-                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line56">line 56</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id="stabilize">
-        <a class="href-link" href="#stabilize">#</a>
-        
-        <span class="code-name">
-            
-                stabilize<span class="signature">()</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>Iterate until stable -- when no states have changed</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-    <dt class="tag-todo">To Do:</dt>
-    <dd class="tag-todo">
-        <ul>
-            <li>only change cell class once?</li>
-        </ul>
-    </dd>
-    
-
-    
-        <p class="tag-source">
-            <a href="automata.mjs.html" class="button">View Source</a>
-            <span>
-                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line99">line 99</a>
             </span>
         </p>
     

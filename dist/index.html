@@ -4,124 +4,65 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>CA</title>
-    <script type="module" crossorigin>(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))s(o);new MutationObserver(o=>{for(const a of o)if(a.type==="childList")for(const l of a.addedNodes)l.tagName==="LINK"&&l.rel==="modulepreload"&&s(l)}).observe(document,{childList:!0,subtree:!0});function n(o){const a={};return o.integrity&&(a.integrity=o.integrity),o.referrerPolicy&&(a.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?a.credentials="include":o.crossOrigin==="anonymous"?a.credentials="omit":a.credentials="same-origin",a}function s(o){if(o.ep)return;o.ep=!0;const a=n(o);fetch(o.href,a)}})();const f=class{constructor(e,t,n,s){this.rowNum=e,this.colNum=t,this.states=n,this.rules=s,this.cells=[];for(let o=0;o<this.rowNum;o++){this.cells[o]=[];for(let a=0;a<this.colNum;a++)this.cells[o][a]=new S(o,a,this.states[0])}this.calcNeighbours()}calcNeighbours(){for(let e=0;e<this.rowNum;e++)for(let t=0;t<this.colNum;t++){let n=[];for(let s=e-1;s<=e+1;s++)for(let o=t-1;o<=t+1;o++)(s!=e||o!=t)&&s>=0&&s<this.rowNum&&o>=0&&o<this.colNum&&n.push(this.cells[s][o]);this.cells[e][t].neighbours=n}}randomizeStates(e=.45){for(let t=0;t<this.rowNum;t++)for(let n=0;n<this.colNum;n++){const s=Math.random();this.cells[t][n].setState(s<=e?"on":"off")}}iterate(){let e=[];return this.cells.forEach(t=>{t.forEach(n=>{this.rules.forEach(s=>{n.state==s.startState&&n.numNeighAt(s.neighState)>=s.threshold&&e.push({cell:n,state:s.endState})})})}),e.forEach(t=>t.cell.setState(t.state)),e.length!=0}stabilize(){let e=0,t=!0;for(;t&&e<100;)t=this.iterate(),e++;alert(t?"Failed to stabilize after "+e+" iterations":"Stabilized in "+(e-1)+" iterations")}},S=class{constructor(e,t,n){this.row=e,this.col=t,this.id=this.row+"-"+this.col,this.setState(n)}setState(e){this.state=e,$("#"+this.id).attr("class",e)}numNeighAt(e){return this.neighbours.reduce((t,n)=>t+(n.state==e?1:0),0)}},h={automata:[{name:"Cave Generation",generate:p},{name:"Game of Life",generate:g},{name:"Design",generate:N}],helpers:{setBoundaryWalls:m}};function p(){const n=["on","off"],s={startState:"off",neighState:"on",threshold:5,endState:"on"},o={startState:"on",neighState:"off",threshold:6,endState:"off"},a=new f(100,100,n,[s,o]);return a.randomizeStates(.45),m(a),a}function g(){const n=["on","off"],s=[{startState:"on",neighState:"off",threshold:7,endState:"off"},{startState:"on",neighState:"on",threshold:4,endState:"off"},{startState:"off",neighState:"on",threshold:3,endState:"on"},{startState:"off",neighState:"on",threshold:4,endState:"off"}],o=new f(100,100,n,s);return o.randomizeStates(.2),o}function N(){const n=["on","off"],s=[{startState:"on",neighState:"off",threshold:7,endState:"off"},{startState:"on",neighState:"on",threshold:4,endState:"off"},{startState:"off",neighState:"on",threshold:2,endState:"on"},{startState:"off",neighState:"on",threshold:4,endState:"off"}],o=new f(100,100,n,s);return o.cells.forEach(a=>{a.forEach(l=>l.setState("off"))}),o.cells[48][50].setState("on"),o.cells[50][48].setState("on"),o.cells[50][52].setState("on"),o.cells[52][50].setState("on"),o}function m(e){for(let t=0;t<e.colNum;t++)e.cells[0][t].setState("off"),e.cells[e.rowNum-1][t].setState("off");for(let t=0;t<e.rowNum;t++)e.cells[t][0].setState("off"),e.cells[t][e.colNum-1].setState("off")}let r,c;w();function w(){let e=!1,t;$("button#animate").on("click",function(){const s=$("#speed").val();e?(clearInterval(t),$(this).text("Animate")):(t=setInterval(()=>{r.iterate()||(clearInterval(t),e=!1,$("button#animate").text("Animation Done").prop("disabled",!0))},s*1e3),$(this).text("Stop Animation")),e=!e});const n=function(){clearInterval(t),e=!1,$("button#animate").text("Animate").prop("disabled",!1)};$("button#randomize").on("click",()=>{const s=$("#prob").val();r.randomizeStates(s),n(),c=="Cave Generation"&&h.helpers.setBoundaryWalls(r)}),$("button#iterate").on("click",()=>{n(),r.iterate()}),$("button#stabilize").on("click",()=>{n(),r.stabilize()}),$("input#gap").on("change",function(){$("#grid").css("gap",this.checked?1:"0px")}),h.automata.forEach(s=>{const o=$("<button>").text(s.name);o.on("click",()=>{n(),c=s.name,r=s.generate(),d()}),$("#presets").append(o)}),$("#create-ca").on("submit",function(s){s.preventDefault(),n();const o=s.target.rows.value,a=s.target.cols.value,l=["on","off"];let u=[];return $(".rule").each(function(){const i=$(this).find(":input");u.push({startState:$(i[0]).val(),neighState:$(i[1]).val(),threshold:$(i[2]).val(),endState:$(i[3]).val()})}),c="Custom",r=new f(o,a,l,u),d(),r.randomizeStates(),!1}),$("button#add-rule").on("click",()=>{const s=$("#rule").contents().clone();$(s).children(".delete-rule").on("click",()=>$(s).remove()),$("#rules-container").append(s)})}function d(){$("#automata-name").text(c);const e=$("#grid").empty();e.css("grid-template-columns",(100/r.colNum+"fr ").repeat(r.colNum)),e.css("grid-template-rows",(100/r.rowNum+"fr ").repeat(r.rowNum));for(let t=0;t<r.rowNum;t++)for(let n=0;n<r.colNum;n++){const s=r.cells[t][n].id,o=$("<div>").attr("id",s).attr("class",r.cells[t][n].state);$(e).append(o),$(o).on("click",()=>{let a=r.cells[t][n].state=="on"?"off":"on";r.cells[t][n].setState(a)})}$("#automata").show()}</script>
-    <style rel="stylesheet" crossorigin>body{font-size:1.75rem;color:#fff;background-color:#787878}#presets{margin-bottom:2%;float:left}#presets button{display:block;margin-top:15px}#new-automata{float:right}#new-automata form#create-ca{width:fit-content;margin:2% 0;padding:20px;color:#000;background-color:#d9d9d9}#new-automata form#create-ca p{font-size:1.25rem}#new-automata form#create-ca .form-input{margin-bottom:5px}#new-automata form#create-ca label{margin-right:1rem}#new-automata form#create-ca input:not([type=submit]),#new-automata form#create-ca select{float:right}#new-automata form#create-ca fieldset{width:80%;margin-top:15px}#new-automata form#create-ca fieldset legend{font-weight:700}#new-automata form#create-ca .rule{margin-bottom:15px;padding:10px;background-color:#ffffff80}#automata{display:none;clear:both}#automata #automata-title{font-size:2rem;font-weight:700;font-variant:small-caps;text-decoration:underline}#automata p{margin:0}#automata #grid{width:95vh;height:95vh;padding:10px;display:grid}#automata #grid div.off{background-color:#000}#automata #grid div.on{background-color:#fff}</style>
+    <script type="module" crossorigin>(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const l of document.querySelectorAll('link[rel="modulepreload"]'))o(l);new MutationObserver(l=>{for(const r of l)if(r.type==="childList")for(const s of r.addedNodes)s.tagName==="LINK"&&s.rel==="modulepreload"&&o(s)}).observe(document,{childList:!0,subtree:!0});function i(l){const r={};return l.integrity&&(r.integrity=l.integrity),l.referrerPolicy&&(r.referrerPolicy=l.referrerPolicy),l.crossOrigin==="use-credentials"?r.credentials="include":l.crossOrigin==="anonymous"?r.credentials="omit":r.credentials="same-origin",r}function o(l){if(l.ep)return;l.ep=!0;const r=i(l);fetch(l.href,r)}})();const g=class{constructor(e,t,i){this.colNum=e,this.rule=t,this.iteration=0,i=i!="middle"&&i!="random"?"middle":i,i=="middle"?(this.cells=[...new Array(this.colNum)].map(()=>0),this.cells[Math.floor(this.colNum/2)]=1):this.cells=[...new Array(this.colNum)].map(()=>Math.round(Math.random()))}iterate(){let e=[];for(let t=0;t<this.colNum;t++){const i=this.cells[(t-1+this.colNum)%this.colNum],o=this.cells[t],l=this.cells[(t+1)%this.colNum],r=parseInt(`${i}${o}${l}`,2);e[t]=parseInt(this.rule[r])}this.cells=e,this.iteration++}};let n,c,f;w();function w(){f=$("#grid")[0].getContext("2d"),$("#create-ca").on("submit",function(o){o.preventDefault(),i();const l=parseInt(o.target.cols.value),r=o.target.start.value;let s=parseInt(o.target.rule.value);const a="Rule "+s;return s=s.toString(2).padStart(8,"0"),s=s.split("").reverse().join(""),n=new g(l,s,r),N(),$("#automata-name").text(a),$("#rule-string").text(n.rule),$(".info").show(),$("#automata").show(),y(),!1});let e=!1,t;$("button#animate").on("click",function(){const o=$("#speed").val();e?(clearInterval(t),$(this).text("Animate")):(t=setInterval(()=>{n.iterate(),d()},o*1e3),$(this).text("Stop Animation")),e=!e});const i=()=>{clearInterval(t),e=!1,$("button#animate").text("Animate")};$("button#iterate").on("click",()=>{i(),n.iterate(),d()})}function y(){const e=$("#rule-display")[0].getContext("2d"),t=35,i=3,o=5*i;$("#rule-display").attr("width")||($("#rule-display").attr("width",24*t+24*i+8*o),$("#rule-display").attr("height",t*2+o+2));let l=1,r=0;for(let s=7;s>=0;s--){e.fillStyle=parseInt(n.rule[s])?"black":"white";const a=Math.floor(l*(t*3)+l*(i*3)+l*o-(t*2+i));e.fillRect(a,t+o,t,t),e.fillStyle="black",e.strokeRect(a,t+o,t,t);const p=s.toString(2).padStart(3,"0");for(let u=0;u<3;u++){e.fillStyle=parseInt(p[u])?"black":"white";const h=u==0?o:0,m=Math.floor(r*t+r*i+(l*o-h)+h);e.fillRect(m,0,t,t),e.fillStyle="black",e.strokeRect(m,0,t,t),r++}l++}}function N(){const e=$("#grid")[0];f.clearRect(0,0,e.width,e.height);const t=Math.floor(1001/n.colNum)*n.colNum*2;t!=e.width&&(e.width=t,c=Math.floor(e.width/n.colNum),e.height=c*1e3),d()}function d(){for(let e=0;e<n.colNum;e++)f.fillStyle=n.cells[e]?"black":"white",f.fillRect(c*e,n.iteration*c,c,c)}</script>
+    <style rel="stylesheet" crossorigin>body{padding:2%;font-size:1.75rem;color:#fff;background-color:#515151}#top{display:-webkit-box;display:-ms-flexbox;display:-webkit-flex;display:flex;flex-wrap:wrap;justify-content:space-between;overflow:hidden}#new-automata form#create-ca{width:fit-content;margin:2% 0;padding:20px;color:#000;background-color:#d9d9d9}#new-automata form#create-ca p{font-size:1.25rem}#new-automata form#create-ca .form-input{margin-bottom:5px}#new-automata form#create-ca label{margin-right:1rem}#new-automata form#create-ca input:not([type=submit]),#new-automata form#create-ca select{float:right}.info{display:none}.info#ca-info #automata-title{font-size:2rem;font-weight:700;font-variant:small-caps;text-decoration:underline}.info#ca-info p{margin:0}.info#rule-info{margin:2% 0 5%}.info#rule-info #rule-display{width:calc(100% - 30px);padding:15px;display:block;background-color:#a0a0a0}#automata{display:none;clear:both}#automata #menu{padding:10px;position:-webkit-sticky;position:sticky;top:0;color:#000;background-color:#d9d9d9}#automata #menu #iterate{float:right}#automata #grid{width:100%;image-rendering:pixelated}</style>
   </head>
   <body>
-    <!-- Create predetermined automata -->
-    <div id="presets">
-      <span>Preset Automata: </span>
-    </div>
+    <div id="top">
+      <div id="ca-info" class="info">
+        <span id="automata-title">Current Automata: <span id="automata-name"></span></span>
+        <br/>
+        <p>Speed: how often to animate in seconds</p>
+        <p>Animate: iterate once per speed unit</p>
+        <p>Iterate: run rules on each cell once</p>
+        <br/>
+      </div>
 
-    <!-- Create a new cellular automata -->
-    <div id="new-automata">
-      <span>Create New Automata:</span>
+      <!-- Create a new cellular automata -->
+      <div id="new-automata">
+        <span>Create New Automata:</span>
+        <form id="create-ca">
 
-      <form id="create-ca">
-        <div class="form-input">
-          <label for="rows">Number of rows:</label>
-          <input id="rows" name="rows" type="number" min="1" max="200" step="1" placeholder="100" required>
-        </div>
-        <div class="form-input">
-          <label for="cols">Number of columns:</label>
-          <input id="cols" name="cols" type="number" min="1" max="200" step="1" placeholder="100" required>
-        </div>
-        <!--
-        <div class="form-input">
-          <label for="states">States:</label>
-          <input id="states" name="states" type="text" placeholder="on, off">
-        </div>
-        -->
-        <fieldset class="form-input">
-          <legend>Rules</legend>
-          <p>If cell is in <code>start state</code> <br/>and <code>threshold</code> neighbours <br/>at <code>neigh state</code>, change to <br/><code>end state</code></p>
-
-          <!-- List of all rules -->
-          <div id="rules-container">
-            <template id="rule">
-              <div class="rule">
-                <!-- Check if current cell is in this state -->
-                <div class="form-input">
-                  <label>Start state:</label>
-                  <select required>
-                    <option disabled selected hidden value> -- </option>
-                    <option value="on">On</option>
-                    <option value="off">Off</option>
-                  </select>
-                </div>
-
-                <!-- Check if neighbours are in this state -->
-                <div class="form-input">
-                  <label>Neigh state:</label>
-                  <select required>
-                    <option disabled selected hidden value> -- </option>
-                    <option value="on">On</option>
-                    <option value="off">Off</option>
-                  </select>
-                </div>
-
-                <!-- Number matching neighbours needed -->
-                <div class="form-input">
-                  <label>Threshold:</label>
-                  <input type="number" min="0" max="8" step="1" required>
-                </div>
-
-                <!-- Change to this state if passed -->
-                <div class="form-input">
-                  <label>End state:</label>
-                  <select required>
-                    <option disabled selected hidden value> -- </option>
-                    <option value="on">On</option>
-                    <option value="off">Off</option>
-                  </select>
-                </div>
-
-                <button class="delete-rule" type="button">Delete Rule</button>
-              </div>
-            </template>
+          <div class="form-input">
+            <label for="cols">Number of columns:</label>
+            <input id="cols" name="cols" type="number" min="101" max="1001" step="1" value="255" required>
           </div>
 
-          <button id="add-rule" type="button">Add Rule</button>
-        </fieldset>
+          <div class="form-input">
+            <label for="rule">Rule:</label>
+            <input id="rule" name="rule" type="number" min="0" max="255" step="1" value="90" required>
+          </div>
 
-        <input id="create" type="submit" value="Create Automatata" />
-      </form>
+          <div class="form-input">
+            <label for="start">Start state:</label>
+            <select id="start" name="start" required>
+              <option value="middle" selected>Middle On</option>
+              <option value="random">Random</option>
+            </select>
+          </div>
+
+          <input id="create" type="submit" value="Create Automatata" />
+        </form>
+      </div>
+      </div>
+
+    <div id="rule-info" class="info">
+      Rule: <span id="rule-string"></span>
+      <canvas id="rule-display"></canvas>
     </div>
 
     <div id="automata">
-      <span id="automata-title">Current Automata: <span id="automata-name"></span></span>
-      <br/>
-      <p>Click on a cell to toggle on/off</p>
-      <br/>
-      <sp>Randomize: set each cell randomly on/off</p>
-      <p>Iterate: run rules on each cell once</p>
-      <p>Stabilze: iterate until nothing changes</p>
-      <p>Speed: how often to animate in seconds</p>
-      <p>Animate: iterate once per speed unit</p>
-      <br/>
+      <div id="menu">
+        <!-- How often to animate -->
+        <label for="speed">Speed: </label><input id="speed" name="speed" type="number" min="0" max="100" step="0.01" value="0.1">
+        <!-- Iterate over rules once/speed -->
+        <button id="animate">Animate</button>
 
-      <!-- Set grid gap visibility -->
-      <label for="gap">Show grid lines: </label>
-      <input id="gap" name="gap" type="checkbox">
-      <br/>
+        <!-- Iterate over rules once -->
+        <button id="iterate">Iterate</button>
+      </div>
 
-      <!-- How often a randomized cell will be on -->
-      <label for="prob">'On' probability: </label><input id="prob" name="prob" type="number" min="0" max="1" step="0.01" value="0.45">
-
-      <!-- Randomized all cell states -->
-      <button id="randomize">Randomize</button>
-
-      <!-- Iterate over rules once -->
-      <button id="iterate">Iterate</button>
-      <!-- Iterate over rules until no changes -->
-      <button id="stabilize">Stabilize</button>
-
-      <!-- How often to animate -->
-       <label for="speed">Speed: </label><input id="speed" name="speed" type="number" min="0" max="100" step="0.1" value="0.5">
-      <!-- Iterate over rules once/speed -->
-      <button id="animate">Animate</button>
-
-      <div id="grid"></div>
+      <canvas id="grid"></canvas>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

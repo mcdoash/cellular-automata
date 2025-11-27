@@ -1,13 +1,13 @@
 {
   "name": "cellular-autotmata",
-  "version": "0.0.2",
+  "version": "1.2.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "author": "Ashley McDonald",
-  "description": "",
+  "description": "A simple cellular automata visualizer.",
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@stylistic/eslint-plugin": "^5.5.0",

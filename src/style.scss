@@ -26,7 +26,7 @@ body {
     p { font-size: 1.25rem; }
     .form-input { margin-bottom: 5px; }
     label { margin-right: 1rem; }
-    input:not([type='submit']) { float: right; }
+    input:not([type='submit']), select { float: right; }
   }
 }
 
