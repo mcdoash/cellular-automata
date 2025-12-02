@@ -50,7 +50,7 @@ function setup() {
 
     if (!animate) {
       interval = setInterval(() => {
-        M.iterate();
+        M.step();
         drawRow();
       }, (speed * 1000));
       $(this).text('Stop Animation');
@@ -69,10 +69,10 @@ function setup() {
     $('button#animate').text('Animate');
   };
 
-  // Set iterate button
-  $('button#iterate').on('click', () => {
+  // Set step button
+  $('button#step').on('click', () => {
     resetAnimation();
-    M.iterate();
+    M.step();
     drawRow();
   });
 }
@@ -151,6 +151,6 @@ function drawRow() {
   // Draw all cells
   for (let c = 0; c < M.colNum; c++) {
     ctx.fillStyle = M.cells[c] ? 'black' : 'white';
-    ctx.fillRect((cellSize * c), M.iteration * cellSize, cellSize, cellSize);
+    ctx.fillRect((cellSize * c), M.time * cellSize, cellSize, cellSize);
   }
 }

@@ -3,7 +3,7 @@
  * @property {number} colNum the number of columns
  * @property {Array} cells 2D array of cell states
  * @property {string} rule cell state transition rules
- * @property {number} iteration current time step
+ * @property {number} time current time step
  */
 const CA = class {
   /**
@@ -14,7 +14,7 @@ const CA = class {
   constructor(cols, rule, startType) {
     this.colNum = cols;
     this.rule = rule;
-    this.iteration = 0;
+    this.time = 0;
 
     // Ensure valid start type
     startType = (startType != 'middle' && startType != 'random') ? 'middle' : startType;
@@ -32,9 +32,9 @@ const CA = class {
 
   /**
    * Update all cells via rule
-   * @function CA#iterate
+   * @function CA#step
    */
-  iterate() {
+  step() {
     let changedCells = [];
 
     // Calculate the new state of each cell
@@ -49,9 +49,9 @@ const CA = class {
       changedCells[i] = parseInt(this.rule[n]);
     }
 
-    // Actually change states after iteration
+    // Actually change states
     this.cells = changedCells;
-    this.iteration++;
+    this.time++;
   }
 };
 
