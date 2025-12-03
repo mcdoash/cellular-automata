@@ -17,6 +17,7 @@
         <p><i>Step:</i> run rule on each cell once</p>
         <p><i>Animate:</i> step continuously</p>
         <p><i>Speed:</i> how often to animate (in seconds)</p>
+        <p><i>Auto scroll:</i> automatically scroll when animating</p>
         <br/>
       </div>
 
@@ -59,6 +60,9 @@
         <label for="speed">Speed (s): </label><input id="speed" name="speed" type="number" min="0" max="60" step="0.01" value="0.1">
         <!-- Increase time step once/speed -->
         <button id="animate">Animate</button>
+        <!-- Auto scroll -->
+        <label for="scroll">Auto scroll: </label>
+        <input id="scroll" name="scroll" type="checkbox" checked>
 
         <!-- Increase time step by one -->
         <button id="step">Step</button>

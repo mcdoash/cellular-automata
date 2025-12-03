@@ -64,6 +64,15 @@ function setup() {
       interval = setInterval(() => {
         M.step();
         drawRow();
+        // Scroll down if autoscroll selected
+        if ($('#scroll').is(':checked')) {
+          $(window).scrollTop($('#grid').offset().top);
+        }
+        // Check if canvas limit reached
+        if (canvas.height >= offscreenCanvas.height) {
+          clearInterval(interval);
+          $(this).text('End of Animation').attr('disabled', 'disabled');
+        }
       }, (speed * 1000));
       $(this).text('Stop Animation');
     }
@@ -149,7 +158,7 @@ function setupCavas() {
 
   // Setup offscreen canvas
   offscreenCanvas.width = canvas.width;
-  offscreenCanvas.height = canvas.height * 1000;
+  offscreenCanvas.height = canvas.height * 5000;
 
   // Draw starting state
   drawRow();
