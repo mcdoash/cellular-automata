@@ -8,9 +8,9 @@ body {
 h1 {
   font-size: 2.5rem;
   font-variant: small-caps;
-  text-shadow: 5px 5px black;
+  text-shadow: 2px 2px black;
 }
-h2 { font-size: 2.25rem; }
+h2 { font-size: 2rem; }
 
 #top {
   margin-top: 2rem;
@@ -31,7 +31,6 @@ h2 { font-size: 2.25rem; }
     color: black;
     background-color: #d9d9d9;
 
-    p { font-size: 1.25rem; }
     .form-input { margin-bottom: 5px; }
     label { margin-right: 1rem; }
     input:not([type='submit']), select { float: right; }

@@ -20,11 +20,19 @@ function setup() {
   offscreenCanvas = $('<canvas>')[0];
   offscreenCanvas.ctx = offscreenCanvas.getContext('2d');
 
+  // Set max lattice width
+  const setMaxWidth = function () {
+    const maxWidth = Math.floor($(window).width());
+    $('#width').attr('max', maxWidth);
+  };
+  setMaxWidth();
+  $(window).on('resize', setMaxWidth);
+
   // New automata form
   $('#create-ca').on('submit', function (e) {
     e.preventDefault();
     resetAnimation();
-    const colNum = parseInt(e.target.cols.value);
+    const width = parseInt(e.target.width.value);
     const startType = e.target.start.value;
 
     // Format rule
@@ -33,7 +41,7 @@ function setup() {
     rule = rule.toString(2).padStart(8, '0');
     rule = rule.split('').reverse().join('');
 
-    M = new CA(colNum, rule, startType);
+    M = new CA(width, rule, startType);
     setupCavas();
 
     // Set info text
@@ -134,8 +142,9 @@ function drawRule() {
  */
 function setupCavas() {
   // Setup canvas resolution
-  canvas.width = Math.floor(1001 / M.colNum) * M.colNum * 2;
-  cellSize = Math.floor(canvas.width / M.colNum);
+  const maxWidth = $('#width').val();
+  canvas.width = Math.floor(maxWidth / M.width) * M.width;
+  cellSize = Math.max(Math.floor(canvas.width / M.width), 1);
   canvas.height = cellSize;
 
   // Setup offscreen canvas
@@ -151,8 +160,8 @@ function setupCavas() {
  * @function drawRow
  */
 function drawRow() {
-  // Draw all cells in offscreen canvas
-  for (let c = 0; c < M.colNum; c++) {
+  // Draw new row in offscreen canvas
+  for (let c = 0; c < M.width; c++) {
     offscreenCanvas.ctx.fillStyle = M.cells[c] ? 'black' : 'white';
     offscreenCanvas.ctx.fillRect((cellSize * c), M.time * cellSize, cellSize, cellSize);
   }
