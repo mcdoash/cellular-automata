@@ -59,7 +59,6 @@ h2 { font-size: 2.25rem; }
 
 #automata {
   display: none;
-  clear: both;
 
   #menu {
     padding: 10px;
@@ -75,6 +74,7 @@ h2 { font-size: 2.25rem; }
 
   #grid {
     width: 100%;
+    display: block;
     image-rendering: pixelated;
   }
 }

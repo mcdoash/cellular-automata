@@ -4,7 +4,8 @@ import { CA } from './automata.mjs';
 // Globals
 let M;
 let cellSize;
-let ctx;
+let canvas;
+let offscreenCanvas;
 
 setup();
 
@@ -13,8 +14,11 @@ setup();
  * @function setup
  */
 function setup() {
-  // Define canvas for drawing automaton
-  ctx = $('#grid')[0].getContext('2d');
+  // Define canvases for drawing automaton
+  canvas = $('#grid')[0];
+  canvas.ctx = canvas.getContext('2d');
+  offscreenCanvas = $('<canvas>')[0];
+  offscreenCanvas.ctx = offscreenCanvas.getContext('2d');
 
   // New automata form
   $('#create-ca').on('submit', function (e) {
@@ -105,6 +109,7 @@ function drawRule() {
     const x = Math.floor(((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + gap));
     ruleCtx.fillRect(x, (boxSize + sep), boxSize, boxSize);
     ruleCtx.fillStyle = 'black';
+    /** @todo fix top stroke */
     ruleCtx.strokeRect(x, (boxSize + sep), boxSize, boxSize);
 
     // Draw state boxes
@@ -125,19 +130,17 @@ function drawRule() {
 /**
  * Setup the canvas where the automata will be drawn
  * @function setupCavas
- * @todo dynamic grid height, better resolution
+ * @todo better resolution
  */
 function setupCavas() {
-  const grid = $('#grid')[0];
-  ctx.clearRect(0, 0, grid.width, grid.height);
+  // Setup canvas resolution
+  canvas.width = Math.floor(1001 / M.colNum) * M.colNum * 2;
+  cellSize = Math.floor(canvas.width / M.colNum);
+  canvas.height = cellSize;
 
-  // Setup resolution
-  const newWidth = Math.floor(1001 / M.colNum) * M.colNum * 2;
-  if (newWidth != grid.width) {
-    grid.width = newWidth;
-    cellSize = Math.floor(grid.width / M.colNum);
-    grid.height = cellSize * 1000;
-  }
+  // Setup offscreen canvas
+  offscreenCanvas.width = canvas.width;
+  offscreenCanvas.height = canvas.height * 1000;
 
   // Draw starting state
   drawRow();
@@ -148,9 +151,12 @@ function setupCavas() {
  * @function drawRow
  */
 function drawRow() {
-  // Draw all cells
+  // Draw all cells in offscreen canvas
   for (let c = 0; c < M.colNum; c++) {
-    ctx.fillStyle = M.cells[c] ? 'black' : 'white';
-    ctx.fillRect((cellSize * c), M.time * cellSize, cellSize, cellSize);
+    offscreenCanvas.ctx.fillStyle = M.cells[c] ? 'black' : 'white';
+    offscreenCanvas.ctx.fillRect((cellSize * c), M.time * cellSize, cellSize, cellSize);
   }
+  // Increase canvas height and draw image
+  canvas.height += cellSize;
+  canvas.ctx.drawImage(offscreenCanvas, 0, 0);
 }
