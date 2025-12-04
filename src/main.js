@@ -12,6 +12,7 @@ setup();
 /**
  * Setup DOM elements needed at start
  * @function setup
+ * @todo fix autoscroll stopping once it fills page height
  */
 function setup() {
   // Define canvases for drawing automaton
@@ -39,14 +40,14 @@ function setup() {
     let rule = parseInt(e.target.rule.value);
     const automataType = 'Rule ' + rule;
     rule = rule.toString(2).padStart(8, '0');
-    rule = rule.split('').reverse().join('');
+    const formattedRule = rule.split('').reverse().join('');
 
-    M = new CA(width, rule, startType);
+    M = new CA(width, formattedRule, startType);
     setupCavas();
 
     // Set info text
     $('#automata-name').text(automataType);
-    $('#rule-string').text(M.rule);
+    $('#rule-string').text(rule);
     $('.info').show();
     $('#automata').show();
     drawRule();
@@ -104,40 +105,39 @@ function setup() {
  */
 function drawRule() {
   const ruleCtx = $('#rule-display')[0].getContext('2d');
+  const totalBoxes = 8 * 3;
+  const maxWidth = $('#width').attr('max') * 2;
+  const boxSize = Math.floor(maxWidth / totalBoxes);
+  const gap = Math.floor(boxSize * 0.1); // Between boxes in a rule
+  const sep = 5 * gap; // Between rules
 
-  const boxSize = 35;
-  const gap = 3;
-  const sep = 5 * gap;
-
-  // Define resolution once
-  if (!$('#rule-display').attr('width')) {
-    const totalBoxes = 8 * 3;
-    $('#rule-display').attr('width', (totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep));
-    $('#rule-display').attr('height', boxSize * 2 + sep + 2);
-  }
-
-  let ruleNum = 1;
-  let boxNum = 0;
+  // Define resolution
+  $('#rule-display').attr('width', ((totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep)));
+  $('#rule-display').attr('height', ((boxSize * 2) + (sep / 2) + (gap / 2)));
+  ruleCtx.lineWidth = Math.floor(gap / 2);
 
   // Draw boxes for each neighbourhood combination
+  let ruleNum = 1;
+  let boxNum = 0;
   for (let r = 7; r >= 0; r--) {
     // Draw rule box
+    ruleCtx.beginPath();
     ruleCtx.fillStyle = parseInt(M.rule[r]) ? 'black' : 'white';
-    const x = Math.floor(((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + gap));
-    ruleCtx.fillRect(x, (boxSize + sep), boxSize, boxSize);
-    ruleCtx.fillStyle = 'black';
-    /** @todo fix top stroke */
-    ruleCtx.strokeRect(x, (boxSize + sep), boxSize, boxSize);
+    const x = Math.floor(((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + (gap * 2)));
+    ruleCtx.rect(x, (boxSize + (sep / 2) + (ruleCtx.lineWidth / 2)), boxSize, boxSize);
+    ruleCtx.fill();
+    ruleCtx.stroke();
 
     // Draw state boxes
     const neighbourhood = r.toString(2).padStart(3, '0');
     for (let n = 0; n < 3; n++) {
+      ruleCtx.beginPath();
       ruleCtx.fillStyle = parseInt(neighbourhood[n]) ? 'black' : 'white';
       const extraGap = (n == 0) ? sep : 0;
       const x = Math.floor((boxNum * boxSize) + (boxNum * gap) + ((ruleNum * sep) - extraGap) + extraGap);
-      ruleCtx.fillRect(x, 0, boxSize, boxSize);
-      ruleCtx.fillStyle = 'black';
-      ruleCtx.strokeRect(x, 0, boxSize, boxSize);
+      ruleCtx.rect(x, (ruleCtx.lineWidth / 2), boxSize, boxSize);
+      ruleCtx.fill();
+      ruleCtx.stroke();
       boxNum++;
     }
     ruleNum++;
@@ -147,7 +147,7 @@ function drawRule() {
 /**
  * Setup the canvas where the automata will be drawn
  * @function setupCavas
- * @todo better resolution
+ * @todo fix max width
  */
 function setupCavas() {
   // Setup canvas resolution
