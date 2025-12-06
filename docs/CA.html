@@ -102,7 +102,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>CA<span class="signature">(cols, rule, startType)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>CA<span class="signature">(rule, width, startType, boundaryType)</span><span class="type-signature"></span></h2>
         
             <div class="class-description"><p>Class representing a cellular automata</p></div>
         
@@ -128,7 +128,7 @@
         
         <span class="code-name">
             
-                new CA<span class="signature">(cols, rule, startType)</span><span class="type-signature"></span>
+                new CA<span class="signature">(rule, width, startType, boundaryType)</span><span class="type-signature"></span>
             
         </span>
     </h4>
@@ -171,7 +171,7 @@
             
 <tr class="deep-level-0">
   
-      <td class="name"><code>cols</code></td>
+      <td class="name"><code>rule</code></td>
   
 
   <td class="type">
@@ -187,7 +187,7 @@
 
   
 
-  <td class="description last"><p>the number of columns</p></td>
+  <td class="description last"><p>Wolfram rule number</p></td>
 </tr>
 
 
@@ -196,13 +196,13 @@
             
 <tr class="deep-level-0">
   
-      <td class="name"><code>rule</code></td>
+      <td class="name"><code>width</code></td>
   
 
   <td class="type">
   
       
-<code class="param-type">Array.&lt;object></code>
+<code class="param-type">number</code>
 
 
   
@@ -212,7 +212,7 @@
 
   
 
-  <td class="description last"><p>rule as a binary string</p></td>
+  <td class="description last"><p>the latice width</p></td>
 </tr>
 
 
@@ -238,6 +238,31 @@
   
 
   <td class="description last"><p>starting state, either 'middle' or 'random'</p></td>
+</tr>
+
+
+        
+
+            
+<tr class="deep-level-0">
+  
+      <td class="name"><code>boundaryType</code></td>
+  
+
+  <td class="type">
+  
+      
+<code class="param-type">string</code>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>boundary condition, either 'periodic', 'fixed', or 'reflexive'</p></td>
 </tr>
 
 
@@ -276,7 +301,7 @@
             
 <tr class="deep-level-0">
     
-        <td class="name"><code>colNum</code></td>
+        <td class="name"><code>width</code></td>
     
 
     <td class="type">
@@ -292,7 +317,7 @@
 
     
 
-    <td class="description last"><p>the number of columns</p></td>
+    <td class="description last"><p>the lattice width (number of cells)</p></td>
 </tr>
 
         
@@ -338,14 +363,14 @@
 
     
 
-    <td class="description last"><p>cell state transition rules</p></td>
+    <td class="description last"><p>local transition rule</p></td>
 </tr>
 
         
             
 <tr class="deep-level-0">
     
-        <td class="name"><code>iteration</code></td>
+        <td class="name"><code>time</code></td>
     
 
     <td class="type">
@@ -463,12 +488,12 @@
 
 
     
-    <h4 class="name" id="iterate">
-        <a class="href-link" href="#iterate">#</a>
+    <h4 class="name" id="step">
+        <a class="href-link" href="#step">#</a>
         
         <span class="code-name">
             
-                iterate<span class="signature">()</span><span class="type-signature"></span>
+                step<span class="signature">()</span><span class="type-signature"></span>
             
         </span>
     </h4>
@@ -528,7 +553,7 @@
         <p class="tag-source">
             <a href="automata.mjs.html" class="button">View Source</a>
             <span>
-                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line33">line 33</a>
+                <a href="automata.mjs.html">automata.mjs</a>, <a href="automata.mjs.html#line40">line 40</a>
             </span>
         </p>
     

@@ -108,7 +108,8 @@ import { CA } from './automata.mjs';
 // Globals
 let M;
 let cellSize;
-let ctx;
+let canvas;
+let offscreenCanvas;
 
 setup();
 
@@ -117,30 +118,40 @@ setup();
  * @function setup
  */
 function setup() {
-  // Define canvas for drawing automaton
-  ctx = $('#grid')[0].getContext('2d');
+  // Define canvases for drawing automaton
+  canvas = $('#grid')[0];
+  canvas.ctx = canvas.getContext('2d');
+  offscreenCanvas = $('&lt;canvas>')[0];
+  offscreenCanvas.ctx = offscreenCanvas.getContext('2d');
 
-  // New automata form
+  // Set max lattice width
+  const setMaxWidth = function () {
+    const maxWidth = Math.floor($(window).width());
+    $('#width').attr('max', maxWidth);
+  };
+  setMaxWidth();
+  $(window).on('resize', setMaxWidth);
+
+  // Create ECA on form submission
   $('#create-ca').on('submit', function (e) {
     e.preventDefault();
     resetAnimation();
-    const colNum = parseInt(e.target.cols.value);
+
+    const width = parseInt(e.target.width.value);
     const startType = e.target.start.value;
+    const boundaryType = e.target.boundary.value;
+    const rule = parseInt(e.target.rule.value);
 
-    // Format rule
-    let rule = parseInt(e.target.rule.value);
-    const automataType = 'Rule ' + rule;
-    rule = rule.toString(2).padStart(8, '0');
-    rule = rule.split('').reverse().join('');
-
-    M = new CA(colNum, rule, startType);
-    setupCavas();
+    M = new CA(rule, width, startType, boundaryType);
 
     // Set info text
-    $('#automata-name').text(automataType);
-    $('#rule-string').text(M.rule);
+    $('#automata-name').text('Rule ' + rule);
+    $('#rule-string').text(rule.toString(2).padStart(8, '0'));
     $('.info').show();
     $('#automata').show();
+
+    // Clear canvases and draw first row
+    setupCavas();
     drawRule();
 
     return false;
@@ -154,8 +165,17 @@ function setup() {
 
     if (!animate) {
       interval = setInterval(() => {
-        M.iterate();
+        M.step();
         drawRow();
+        // Scroll down if autoscroll selected
+        if ($('#scroll').is(':checked')) {
+          $(window).scrollTop($('#grid').offset().top + $('#grid').height());
+        }
+        // Check if canvas limit reached
+        if (canvas.height >= offscreenCanvas.height) {
+          clearInterval(interval);
+          $(this).text('End of Animation').attr('disabled', 'disabled');
+        }
       }, (speed * 1000));
       $(this).text('Stop Animation');
     }
@@ -173,10 +193,10 @@ function setup() {
     $('button#animate').text('Animate');
   };
 
-  // Set iterate button
-  $('button#iterate').on('click', () => {
+  // Set step button
+  $('button#step').on('click', () => {
     resetAnimation();
-    M.iterate();
+    M.step();
     drawRow();
   });
 }
@@ -187,39 +207,39 @@ function setup() {
  */
 function drawRule() {
   const ruleCtx = $('#rule-display')[0].getContext('2d');
+  const totalBoxes = 8 * 3;
+  const maxWidth = $('#width').attr('max') * 2;
+  const boxSize = Math.floor(maxWidth / totalBoxes);
+  const gap = Math.floor(boxSize * 0.1); // Between boxes in a rule
+  const sep = 5 * gap; // Between rules
 
-  const boxSize = 35;
-  const gap = 3;
-  const sep = 5 * gap;
-
-  // Define resolution once
-  if (!$('#rule-display').attr('width')) {
-    const totalBoxes = 8 * 3;
-    $('#rule-display').attr('width', (totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep));
-    $('#rule-display').attr('height', boxSize * 2 + sep + 2);
-  }
-
-  let ruleNum = 1;
-  let boxNum = 0;
+  // Define resolution
+  $('#rule-display').attr('width', ((totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep)));
+  $('#rule-display').attr('height', ((boxSize * 2) + (sep / 2) + (gap / 2)));
+  ruleCtx.lineWidth = Math.floor(gap / 2);
 
   // Draw boxes for each neighbourhood combination
+  let ruleNum = 1;
+  let boxNum = 0;
   for (let r = 7; r >= 0; r--) {
     // Draw rule box
+    ruleCtx.beginPath();
     ruleCtx.fillStyle = parseInt(M.rule[r]) ? 'black' : 'white';
-    const x = Math.floor(((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + gap));
-    ruleCtx.fillRect(x, (boxSize + sep), boxSize, boxSize);
-    ruleCtx.fillStyle = 'black';
-    ruleCtx.strokeRect(x, (boxSize + sep), boxSize, boxSize);
+    const x = Math.floor(((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + (gap * 2)));
+    ruleCtx.rect(x, (boxSize + (sep / 2) + (ruleCtx.lineWidth / 2)), boxSize, boxSize);
+    ruleCtx.fill();
+    ruleCtx.stroke();
 
     // Draw state boxes
     const neighbourhood = r.toString(2).padStart(3, '0');
     for (let n = 0; n &lt; 3; n++) {
+      ruleCtx.beginPath();
       ruleCtx.fillStyle = parseInt(neighbourhood[n]) ? 'black' : 'white';
       const extraGap = (n == 0) ? sep : 0;
       const x = Math.floor((boxNum * boxSize) + (boxNum * gap) + ((ruleNum * sep) - extraGap) + extraGap);
-      ruleCtx.fillRect(x, 0, boxSize, boxSize);
-      ruleCtx.fillStyle = 'black';
-      ruleCtx.strokeRect(x, 0, boxSize, boxSize);
+      ruleCtx.rect(x, (ruleCtx.lineWidth / 2), boxSize, boxSize);
+      ruleCtx.fill();
+      ruleCtx.stroke();
       boxNum++;
     }
     ruleNum++;
@@ -229,19 +249,18 @@ function drawRule() {
 /**
  * Setup the canvas where the automata will be drawn
  * @function setupCavas
- * @todo dynamic grid height, better resolution
+ * @todo fix max width
  */
 function setupCavas() {
-  const grid = $('#grid')[0];
-  ctx.clearRect(0, 0, grid.width, grid.height);
+  // Setup canvas resolution
+  const maxWidth = $('#width').val();
+  canvas.width = Math.floor(maxWidth / M.width) * M.width;
+  cellSize = Math.max(Math.floor(canvas.width / M.width), 1);
+  canvas.height = cellSize;
 
-  // Setup resolution
-  const newWidth = Math.floor(1001 / M.colNum) * M.colNum * 2;
-  if (newWidth != grid.width) {
-    grid.width = newWidth;
-    cellSize = Math.floor(grid.width / M.colNum);
-    grid.height = cellSize * 1000;
-  }
+  // Setup offscreen canvas
+  offscreenCanvas.width = canvas.width;
+  offscreenCanvas.height = canvas.height * 5000;
 
   // Draw starting state
   drawRow();
@@ -252,11 +271,14 @@ function setupCavas() {
  * @function drawRow
  */
 function drawRow() {
-  // Draw all cells
-  for (let c = 0; c &lt; M.colNum; c++) {
-    ctx.fillStyle = M.cells[c] ? 'black' : 'white';
-    ctx.fillRect((cellSize * c), M.iteration * cellSize, cellSize, cellSize);
+  // Draw new row in offscreen canvas
+  for (let c = 0; c &lt; M.width; c++) {
+    offscreenCanvas.ctx.fillStyle = M.cells[c] ? 'black' : 'white';
+    offscreenCanvas.ctx.fillRect((cellSize * c), M.time * cellSize, cellSize, cellSize);
   }
+  // Increase canvas height and draw image
+  canvas.height += cellSize;
+  canvas.ctx.drawImage(offscreenCanvas, 0, 0);
 }
 </code></pre>
         </article>
