@@ -1,31 +1,38 @@
 /**
  * Class representing a cellular automata
  * @property {number} width the lattice width (number of cells)
- * @property {Array} cells 2D array of cell states
- * @property {string} rule cell state transition rules
+ * @property {Array}  cells 2D array of cell states
+ * @property {string} rule local transition rule
  * @property {number} time current time step
  */
 const CA = class {
   /**
+   * @param {number} rule Wolfram rule number
    * @param {number} width the latice width
-   * @param {object[]} rule rule as a binary string
    * @param {string} startType starting state, either 'middle' or 'random'
+   * @param {string} boundaryType boundary condition, either 'periodic', 'fixed', or 'reflexive'
    */
-  constructor(width, rule, startType) {
-    this.width = width;
+  constructor(rule, width, startType, boundaryType) {
+    // Format rule for easy access later
+    rule = rule.toString(2).padStart(8, '0'); // Byte string
+    rule = rule.split('').reverse().join(''); // Reverse
     this.rule = rule;
+
+    this.width = width;
     this.time = 0;
 
-    // Ensure valid start type
-    startType = (startType != 'middle' && startType != 'random') ? 'middle' : startType;
+    // Ensure valid boundary condition
+    this.boundary = ['periodic', 'fixed', 'reflexive'].includes(boundaryType) ? boundaryType : 'periodic';
 
-    if (startType == 'middle') {
-      // Create cells with all but middle off
+    // Ensure valid start type
+    startType = ['middle', 'random'].includes(startType) ? startType : 'middle';
+
+    // Create array of cell
+    if (startType === 'middle') { // All but middle off
       this.cells = [...new Array(this.width)].map(() => 0);
       this.cells[Math.floor(this.width / 2)] = 1;
     }
-    else {
-      // Random states
+    else if (startType === 'random') { // Random states
       this.cells = [...new Array(this.width)].map(() => Math.round(Math.random()));
     }
   }
@@ -35,22 +42,32 @@ const CA = class {
    * @function CA#step
    */
   step() {
-    let changedCells = [];
-
-    // Calculate the new state of each cell
-    for (let i = 0; i < this.width; i++) {
-      const l = this.cells[(i - 1 + this.width) % this.width];
-      // const l = this.cells[i - 1] ?? 0;
-      const c = this.cells[i];
-      const r = this.cells[(i + 1) % this.width];
-      // const r = this.cells[i + 1] ?? 0;
-
-      const n = parseInt(`${l}${c}${r}`, 2);
-      changedCells[i] = parseInt(this.rule[n]);
+    // Set left & right boundary
+    let lBound;
+    let rBound;
+    if (this.boundary == 'periodic') {
+      lBound = this.cells[this.width - 1];
+      rBound = this.cells[0];
+    }
+    else if (this.boundary == 'fixed') {
+      lBound = rBound = 0;
+    }
+    else if (this.boundary == 'reflexive') {
+      lBound = this.cells[0];
+      rBound = this.cells[this.width - 1];
     }
 
-    // Actually change states
-    this.cells = changedCells;
+    // Calculate the new state of each cell
+    let nextGen = [];
+    for (let i = 0; i < this.width; i++) {
+      const l = this.cells[i - 1] ?? lBound;
+      const c = this.cells[i];
+      const r = this.cells[i + 1] ?? rBound;
+
+      const n = parseInt(`${l}${c}${r}`, 2);
+      nextGen[i] = parseInt(this.rule[n]);
+    }
+    this.cells = nextGen;
     this.time++;
   }
 };

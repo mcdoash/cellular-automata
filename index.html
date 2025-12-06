@@ -25,25 +25,29 @@
       <div id="new-automata">
         <span>Create New Automata:</span>
         <form id="create-ca">
-
-          <div class="form-input">
-            <label for="width">Lattice width:</label>
-            <input id="width" name="width" type="number" min="3" max="1001" step="1" placeholder="255" required>
-          </div>
-
           <div class="form-input">
             <label for="rule">Rule:</label>
             <input id="rule" name="rule" type="number" min="0" max="255" step="1" placeholder="90" required>
           </div>
-
           <div class="form-input">
-            <label for="start">Start state:</label>
+            <label for="width">Lattice width:</label>
+            <input id="width" name="width" type="number" min="3" max="1001" step="1" placeholder="101" required>
+          </div>
+          <div class="form-input">
+            <label for="start">Start states:</label>
             <select id="start" name="start" required>
               <option value="middle" selected>Middle On</option>
               <option value="random">Random</option>
             </select>
           </div>
-
+          <div class="form-input">
+            <label for="boundary">Boundary:</label>
+            <select id="boundary" name="boundary" required>
+              <option value="periodic" selected>Periodic</option>
+              <option value="fixed">Fixed 0</option>
+              <option value="reflexive">Reflexive</option>
+            </select>
+          </div>
           <input id="create" type="submit" value="Create Automatata" />
         </form>
       </div>

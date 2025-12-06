@@ -12,7 +12,6 @@ setup();
 /**
  * Setup DOM elements needed at start
  * @function setup
- * @todo fix autoscroll stopping once it fills page height
  */
 function setup() {
   // Define canvases for drawing automaton
@@ -29,27 +28,26 @@ function setup() {
   setMaxWidth();
   $(window).on('resize', setMaxWidth);
 
-  // New automata form
+  // Create ECA on form submission
   $('#create-ca').on('submit', function (e) {
     e.preventDefault();
     resetAnimation();
+
     const width = parseInt(e.target.width.value);
     const startType = e.target.start.value;
+    const boundaryType = e.target.boundary.value;
+    const rule = parseInt(e.target.rule.value);
 
-    // Format rule
-    let rule = parseInt(e.target.rule.value);
-    const automataType = 'Rule ' + rule;
-    rule = rule.toString(2).padStart(8, '0');
-    const formattedRule = rule.split('').reverse().join('');
-
-    M = new CA(width, formattedRule, startType);
-    setupCavas();
+    M = new CA(rule, width, startType, boundaryType);
 
     // Set info text
-    $('#automata-name').text(automataType);
-    $('#rule-string').text(rule);
+    $('#automata-name').text('Rule ' + rule);
+    $('#rule-string').text(rule.toString(2).padStart(8, '0'));
     $('.info').show();
     $('#automata').show();
+
+    // Clear canvases and draw first row
+    setupCavas();
     drawRule();
 
     return false;
@@ -67,7 +65,7 @@ function setup() {
         drawRow();
         // Scroll down if autoscroll selected
         if ($('#scroll').is(':checked')) {
-          $(window).scrollTop($('#grid').offset().top);
+          $(window).scrollTop($('#grid').offset().top + $('#grid').height());
         }
         // Check if canvas limit reached
         if (canvas.height >= offscreenCanvas.height) {
