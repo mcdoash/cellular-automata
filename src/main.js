@@ -16,9 +16,9 @@ setup();
 function setup() {
   // Define canvases for drawing automaton
   canvas = $('#grid')[0];
-  canvas.ctx = canvas.getContext('2d');
+  canvas.ctx = canvas.getContext('2d', { alpha: false });
   offscreenCanvas = $('<canvas>')[0];
-  offscreenCanvas.ctx = offscreenCanvas.getContext('2d');
+  offscreenCanvas.ctx = offscreenCanvas.getContext('2d', { alpha: false });
 
   // Set max lattice width
   const setMaxWidth = function () {
@@ -66,11 +66,6 @@ function setup() {
         // Scroll down if autoscroll selected
         if ($('#scroll').is(':checked')) {
           $(window).scrollTop($('#grid').offset().top + $('#grid').height());
-        }
-        // Check if canvas limit reached
-        if (canvas.height >= offscreenCanvas.height) {
-          clearInterval(interval);
-          $(this).text('End of Animation').attr('disabled', 'disabled');
         }
       }, (speed * 1000));
       $(this).text('Stop Animation');
@@ -145,18 +140,17 @@ function drawRule() {
 /**
  * Setup the canvas where the automata will be drawn
  * @function setupCavas
- * @todo fix max width
  */
 function setupCavas() {
   // Setup canvas resolution
-  const maxWidth = $('#width').val();
-  canvas.width = Math.floor(maxWidth / M.width) * M.width;
+  const maxWidth = $('#width').attr('max');
+  canvas.width = Math.max(Math.floor(maxWidth / M.width) * M.width, 500);
   cellSize = Math.max(Math.floor(canvas.width / M.width), 1);
-  canvas.height = cellSize;
+  canvas.height = 0;
 
   // Setup offscreen canvas
   offscreenCanvas.width = canvas.width;
-  offscreenCanvas.height = canvas.height * 5000;
+  offscreenCanvas.height = canvas.height;
 
   // Draw starting state
   drawRow();
@@ -167,10 +161,16 @@ function setupCavas() {
  * @function drawRow
  */
 function drawRow() {
+  // Adjust offscreen canvas height then redraw
+  offscreenCanvas.height += cellSize;
+  if (M.time != 0) {
+    offscreenCanvas.ctx.drawImage(canvas, 0, 0);
+  }
+
   // Draw new row in offscreen canvas
   for (let c = 0; c < M.width; c++) {
     offscreenCanvas.ctx.fillStyle = M.cells[c] ? 'black' : 'white';
-    offscreenCanvas.ctx.fillRect((cellSize * c), M.time * cellSize, cellSize, cellSize);
+    offscreenCanvas.ctx.fillRect((cellSize * c), (M.time * cellSize), cellSize, cellSize);
   }
   // Increase canvas height and draw image
   canvas.height += cellSize;
