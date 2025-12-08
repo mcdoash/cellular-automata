@@ -12,15 +12,6 @@
     <hr />
 
     <div id="top">
-      <div id="ca-info" class="info">
-        <h2 id="automata-title">Current Automata: <span id="automata-name"></span></h2>
-        <p><i>Step:</i> run rule on each cell once</p>
-        <p><i>Animate:</i> step continuously</p>
-        <p><i>Speed:</i> how often to animate (in seconds)</p>
-        <p><i>Auto scroll:</i> automatically scroll when animating</p>
-        <br/>
-      </div>
-
       <!-- Create a new cellular automata -->
       <div id="new-automata">
         <span>Create New Automata:</span>
@@ -51,10 +42,26 @@
           <input id="create" type="submit" value="Create Automatata" />
         </form>
       </div>
+
+      <!-- Instructions -->
+      <div id="app-info">
+        <p><i>Rule:</i> Wolfram code number from 0-255</p>
+        <p><i>Lattice width:</i> number of cells to use</p>
+        <p><i>Start states:</i> initial configuration</p>
+        <p><i>Boundary:</i> state at boundaries</p>
       </div>
+      <div id="ca-info" class="info">
+        <h2 id="automata-title">Current Automata: <span id="automata-name"></span></h2>
+        <p><i>Step:</i> run rule on each cell once</p>
+        <p><i>Animate:</i> step continuously</p>
+        <p><i>Speed:</i> how often to animate (in seconds)</p>
+        <p><i>Auto scroll:</i> scroll when animating</p>
+        <br/>
+      </div>
+    </div>
 
     <div id="rule-info" class="info">
-      Rule: <span id="rule-string"></span>
+      Rulestring: <span id="rule-string"></span>
       <canvas id="rule-display"></canvas>
     </div>
 

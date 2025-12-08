@@ -1,9 +1,10 @@
 /**
  * Class representing a cellular automata
  * @property {number} width the lattice width (number of cells)
- * @property {Array}  cells 2D array of cell states
- * @property {string} rule local transition rule
+ * @property {Array}  cells array of cell states
+ * @property {string} rule local transition rulestring
  * @property {number} time current time step
+ * @property {string} boundary boundary condition type
  */
 const CA = class {
   /**
@@ -13,11 +14,8 @@ const CA = class {
    * @param {string} boundaryType boundary condition, either 'periodic', 'fixed', or 'reflexive'
    */
   constructor(rule, width, startType, boundaryType) {
-    // Format rule for easy access later
-    rule = rule.toString(2).padStart(8, '0'); // Byte string
-    rule = rule.split('').reverse().join(''); // Reverse
-    this.rule = rule;
-
+    // Convert rule number to rule string
+    this.rule = rule.toString(2).padStart(8, '0');
     this.width = width;
     this.time = 0;
 
@@ -27,7 +25,7 @@ const CA = class {
     // Ensure valid start type
     startType = ['middle', 'random'].includes(startType) ? startType : 'middle';
 
-    // Create array of cell
+    // Create array of cells
     if (startType === 'middle') { // All but middle off
       this.cells = [...new Array(this.width)].map(() => 0);
       this.cells[Math.floor(this.width / 2)] = 1;
@@ -64,7 +62,7 @@ const CA = class {
       const c = this.cells[i];
       const r = this.cells[i + 1] ?? rBound;
 
-      const n = parseInt(`${l}${c}${r}`, 2);
+      const n = 7 - parseInt(`${l}${c}${r}`, 2);
       nextGen[i] = parseInt(this.rule[n]);
     }
     this.cells = nextGen;

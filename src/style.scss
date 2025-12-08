@@ -19,8 +19,12 @@ h2 { font-size: 2rem; }
   display: -webkit-flex;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  align-items: center;
+  gap: 5vw;
   overflow: hidden;
+
+  h2 { margin: 0 auto 1rem; }
+  p { margin: 0; }
 }
 
 #new-automata {
@@ -40,10 +44,6 @@ h2 { font-size: 2rem; }
 .info {
   display: none;
 
-  &#ca-info {
-    h2 { margin: 0 auto 1rem; }
-    p { margin: 0; }
-  }
   &#rule-info {
     margin: 2% 0 5%;
 

@@ -43,10 +43,11 @@ function setup() {
     // Set info text
     $('#automata-name').text('Rule ' + rule);
     $('#rule-string').text(rule.toString(2).padStart(8, '0'));
+    $('#app-info').hide();
     $('.info').show();
     $('#automata').show();
 
-    // Clear canvases and draw first row
+    // Init canvases and draw ruleset
     setupCavas();
     drawRule();
 
@@ -97,7 +98,8 @@ function setup() {
  * @function drawRule
  */
 function drawRule() {
-  const ruleCtx = $('#rule-display')[0].getContext('2d');
+  const ruleCanvas = $('#rule-display')[0];
+  ruleCanvas.ctx = ruleCanvas.getContext('2d');
   const totalBoxes = 8 * 3;
   const maxWidth = $('#width').attr('max') * 2;
   const boxSize = Math.floor(maxWidth / totalBoxes);
@@ -105,34 +107,58 @@ function drawRule() {
   const sep = 5 * gap; // Between rules
 
   // Define resolution
-  $('#rule-display').attr('width', ((totalBoxes * boxSize) + (totalBoxes * gap) + (8 * sep)));
-  $('#rule-display').attr('height', ((boxSize * 2) + (sep / 2) + (gap / 2)));
-  ruleCtx.lineWidth = Math.floor(gap / 2);
+  ruleCanvas.width = (
+    (totalBoxes * boxSize)
+    + (totalBoxes * gap)
+    + (8 * sep)
+  );
+  ruleCanvas.height = (
+    (boxSize * 2)
+    + (sep / 2)
+    + (gap / 2)
+  );
+  ruleCanvas.ctx.lineWidth = Math.floor(gap / 2);
 
   // Draw boxes for each neighbourhood combination
   let ruleNum = 1;
   let boxNum = 0;
   for (let r = 7; r >= 0; r--) {
-    // Draw rule box
-    ruleCtx.beginPath();
-    ruleCtx.fillStyle = parseInt(M.rule[r]) ? 'black' : 'white';
-    const x = Math.floor(((ruleNum * (boxSize * 3)) + (ruleNum * (gap * 3)) + (ruleNum * sep)) - ((boxSize * 2) + (gap * 2)));
-    ruleCtx.rect(x, (boxSize + (sep / 2) + (ruleCtx.lineWidth / 2)), boxSize, boxSize);
-    ruleCtx.fill();
-    ruleCtx.stroke();
-
-    // Draw state boxes
+    // Draw neighbourhood state boxes
     const neighbourhood = r.toString(2).padStart(3, '0');
     for (let n = 0; n < 3; n++) {
-      ruleCtx.beginPath();
-      ruleCtx.fillStyle = parseInt(neighbourhood[n]) ? 'black' : 'white';
-      const extraGap = (n == 0) ? sep : 0;
-      const x = Math.floor((boxNum * boxSize) + (boxNum * gap) + ((ruleNum * sep) - extraGap) + extraGap);
-      ruleCtx.rect(x, (ruleCtx.lineWidth / 2), boxSize, boxSize);
-      ruleCtx.fill();
-      ruleCtx.stroke();
+      const x = Math.floor(
+        (boxNum * boxSize)
+        + (boxNum * gap)
+        + (ruleNum * sep)
+      );
+      const y = Math.floor(ruleCanvas.ctx.lineWidth / 2);
+
+      ruleCanvas.ctx.beginPath();
+      ruleCanvas.ctx.fillStyle = parseInt(neighbourhood[n]) ? 'black' : 'white';
+      ruleCanvas.ctx.rect(x, y, boxSize, boxSize);
+      ruleCanvas.ctx.fill();
+      ruleCanvas.ctx.stroke();
       boxNum++;
     }
+    // Draw output box
+    const x = Math.floor(
+      (ruleNum * boxSize * 3)
+      + (ruleNum * gap * 3)
+      + (ruleNum * sep)
+      - ((boxSize * 2) + (gap * 2))
+    );
+    const y = Math.floor(
+      boxSize
+      + (sep / 2)
+      + (ruleCanvas.ctx.lineWidth / 2)
+    );
+
+    ruleCanvas.ctx.beginPath();
+    ruleCanvas.ctx.fillStyle = parseInt(M.rule[r]) ? 'black' : 'white';
+    ruleCanvas.ctx.rect(x, y, boxSize, boxSize);
+    ruleCanvas.ctx.fill();
+    ruleCanvas.ctx.stroke();
+
     ruleNum++;
   }
 }
@@ -170,7 +196,7 @@ function drawRow() {
   // Draw new row in offscreen canvas
   for (let c = 0; c < M.width; c++) {
     offscreenCanvas.ctx.fillStyle = M.cells[c] ? 'black' : 'white';
-    offscreenCanvas.ctx.fillRect((cellSize * c), (M.time * cellSize), cellSize, cellSize);
+    offscreenCanvas.ctx.fillRect(cellSize * c, M.time * cellSize, cellSize, cellSize);
   }
   // Increase canvas height and draw image
   canvas.height += cellSize;
