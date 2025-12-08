@@ -120,46 +120,31 @@ function drawRule() {
   ruleCanvas.ctx.lineWidth = Math.floor(gap / 2);
 
   // Draw boxes for each neighbourhood combination
-  let ruleNum = 1;
-  let boxNum = 0;
+  let x = sep;
+  const inputY = Math.floor(ruleCanvas.ctx.lineWidth / 2);
+  const outputY = inputY + Math.floor(boxSize + (sep / 2));
+
   for (let r = 7; r >= 0; r--) {
     // Draw neighbourhood state boxes
     const neighbourhood = r.toString(2).padStart(3, '0');
     for (let n = 0; n < 3; n++) {
-      const x = Math.floor(
-        (boxNum * boxSize)
-        + (boxNum * gap)
-        + (ruleNum * sep)
-      );
-      const y = Math.floor(ruleCanvas.ctx.lineWidth / 2);
-
       ruleCanvas.ctx.beginPath();
       ruleCanvas.ctx.fillStyle = parseInt(neighbourhood[n]) ? 'black' : 'white';
-      ruleCanvas.ctx.rect(x, y, boxSize, boxSize);
+      ruleCanvas.ctx.rect(x, inputY, boxSize, boxSize);
       ruleCanvas.ctx.fill();
       ruleCanvas.ctx.stroke();
-      boxNum++;
+
+      // Draw output box
+      if (n == 1) {
+        ruleCanvas.ctx.beginPath();
+        ruleCanvas.ctx.fillStyle = parseInt(M.rule[7 - r]) ? 'black' : 'white';
+        ruleCanvas.ctx.rect(x, outputY, boxSize, boxSize);
+        ruleCanvas.ctx.fill();
+        ruleCanvas.ctx.stroke();
+      }
+      x += boxSize + gap;
     }
-    // Draw output box
-    const x = Math.floor(
-      (ruleNum * boxSize * 3)
-      + (ruleNum * gap * 3)
-      + (ruleNum * sep)
-      - ((boxSize * 2) + (gap * 2))
-    );
-    const y = Math.floor(
-      boxSize
-      + (sep / 2)
-      + (ruleCanvas.ctx.lineWidth / 2)
-    );
-
-    ruleCanvas.ctx.beginPath();
-    ruleCanvas.ctx.fillStyle = parseInt(M.rule[r]) ? 'black' : 'white';
-    ruleCanvas.ctx.rect(x, y, boxSize, boxSize);
-    ruleCanvas.ctx.fill();
-    ruleCanvas.ctx.stroke();
-
-    ruleNum++;
+    x += sep;
   }
 }
 
