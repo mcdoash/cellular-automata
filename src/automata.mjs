@@ -1,12 +1,11 @@
 /**
- * Class representing a cellular automata
- * @property {number} width the lattice width (number of cells)
+ * Class representing an elementary cellular automata
  * @property {Array}  cells array of cell states
  * @property {string} rule local transition rulestring
  * @property {number} time current time step
  * @property {string} boundary boundary condition type
  */
-const CA = class {
+const ECA = class {
   /**
    * @param {number} rule Wolfram rule number
    * @param {number} width the latice width
@@ -16,7 +15,6 @@ const CA = class {
   constructor(rule, width, startType, boundaryType) {
     // Convert rule number to rule string
     this.rule = rule.toString(2).padStart(8, '0');
-    this.width = width;
     this.time = 0;
 
     // Ensure valid boundary condition
@@ -27,11 +25,11 @@ const CA = class {
 
     // Create array of cells
     if (startType === 'middle') { // All but middle off
-      this.cells = [...new Array(this.width)].map(() => 0);
-      this.cells[Math.floor(this.width / 2)] = 1;
+      this.cells = [...new Array(width)].map(() => 0);
+      this.cells[Math.floor(width / 2)] = 1;
     }
     else if (startType === 'random') { // Random states
-      this.cells = [...new Array(this.width)].map(() => Math.round(Math.random()));
+      this.cells = [...new Array(width)].map(() => Math.round(Math.random()));
     }
   }
 
@@ -44,7 +42,7 @@ const CA = class {
     let lBound;
     let rBound;
     if (this.boundary == 'periodic') {
-      lBound = this.cells[this.width - 1];
+      lBound = this.cells[this.cells.length - 1];
       rBound = this.cells[0];
     }
     else if (this.boundary == 'fixed') {
@@ -52,12 +50,12 @@ const CA = class {
     }
     else if (this.boundary == 'reflexive') {
       lBound = this.cells[0];
-      rBound = this.cells[this.width - 1];
+      rBound = this.cells[this.cells.length - 1];
     }
 
     // Calculate the new state of each cell
     let nextGen = [];
-    for (let i = 0; i < this.width; i++) {
+    for (let i = 0; i < this.cells.length; i++) {
       const l = this.cells[i - 1] ?? lBound;
       const c = this.cells[i];
       const r = this.cells[i + 1] ?? rBound;
@@ -70,4 +68,4 @@ const CA = class {
   }
 };
 
-export { CA };
+export { ECA };

@@ -1,5 +1,5 @@
 import './style.scss';
-import { CA } from './automata.mjs';
+import { ECA } from './automata.mjs';
 
 // Globals
 let M;
@@ -38,7 +38,7 @@ function setup() {
     const boundaryType = e.target.boundary.value;
     const rule = parseInt(e.target.rule.value);
 
-    M = new CA(rule, width, startType, boundaryType);
+    M = new ECA(rule, width, startType, boundaryType);
 
     // Set info text
     $('#automata-name').text('Rule ' + rule);
@@ -54,13 +54,13 @@ function setup() {
     return false;
   });
 
-  // Animate/stop animation button
+  // Animate/stop animation
   let animate = false;
   let interval;
-  $('button#animate').on('click', function () {
+  const toggleAnimation = function () {
     const speed = $('#speed').val();
 
-    if (!animate) {
+    if (!animate && !!M) {
       interval = setInterval(() => {
         M.step();
         drawRow();
@@ -76,6 +76,14 @@ function setup() {
       $(this).text('Animate');
     }
     animate = !animate;
+  };
+
+  // Start/stop animation on 'a' keypress
+  $('button#animate').on('click', toggleAnimation);
+  $(document).on('keypress', function (e) {
+    if (e.which == 97 && !!M) {
+      $('button#animate').trigger('click');
+    }
   });
 
   // Stop animation and reset button
@@ -155,8 +163,8 @@ function drawRule() {
 function setupCavas() {
   // Setup canvas resolution
   const maxWidth = $('#width').attr('max');
-  canvas.width = Math.max(Math.floor(maxWidth / M.width) * M.width, 500);
-  cellSize = Math.max(Math.floor(canvas.width / M.width), 1);
+  canvas.width = Math.max(Math.floor(maxWidth / M.cells.length) * M.cells.length, 500);
+  cellSize = Math.max(Math.floor(canvas.width / M.cells.length), 1);
   canvas.height = 0;
 
   // Setup offscreen canvas
@@ -179,7 +187,7 @@ function drawRow() {
   }
 
   // Draw new row in offscreen canvas
-  for (let c = 0; c < M.width; c++) {
+  for (let c = 0; c < M.cells.length; c++) {
     offscreenCanvas.ctx.fillStyle = M.cells[c] ? 'black' : 'white';
     offscreenCanvas.ctx.fillRect(cellSize * c, M.time * cellSize, cellSize, cellSize);
   }

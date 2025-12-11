@@ -6,30 +6,21 @@
     <title>Elementary CA Visualizer</title>
     <link rel="icon" type="image/png" href="./favicon.ico">
     <meta name="description" content="Visualize an Elementary Cellular Automata and it's rules from a Wolfram code."/>
-    <script type="module" crossorigin>(function(){const s=document.createElement("link").relList;if(s&&s.supports&&s.supports("modulepreload"))return;for(const e of document.querySelectorAll('link[rel="modulepreload"]'))i(e);new MutationObserver(e=>{for(const o of e)if(o.type==="childList")for(const r of o.addedNodes)r.tagName==="LINK"&&r.rel==="modulepreload"&&i(r)}).observe(document,{childList:!0,subtree:!0});function l(e){const o={};return e.integrity&&(o.integrity=e.integrity),e.referrerPolicy&&(o.referrerPolicy=e.referrerPolicy),e.crossOrigin==="use-credentials"?o.credentials="include":e.crossOrigin==="anonymous"?o.credentials="omit":o.credentials="same-origin",o}function i(e){if(e.ep)return;e.ep=!0;const o=l(e);fetch(e.href,o)}})();const b=class{constructor(t,s,l,i){t=t.toString(2).padStart(8,"0"),t=t.split("").reverse().join(""),this.rule=t,this.width=s,this.time=0,this.boundary=["periodic","fixed","reflexive"].includes(i)?i:"periodic",l=["middle","random"].includes(l)?l:"middle",l==="middle"?(this.cells=[...new Array(this.width)].map(()=>0),this.cells[Math.floor(this.width/2)]=1):l==="random"&&(this.cells=[...new Array(this.width)].map(()=>Math.round(Math.random())))}step(){let t,s;this.boundary=="periodic"?(t=this.cells[this.width-1],s=this.cells[0]):this.boundary=="fixed"?t=s=0:this.boundary=="reflexive"&&(t=this.cells[0],s=this.cells[this.width-1]);let l=[];for(let i=0;i<this.width;i++){const e=this.cells[i-1]??t,o=this.cells[i],r=this.cells[i+1]??s,d=parseInt(`${e}${o}${r}`,2);l[i]=parseInt(this.rule[d])}this.cells=l,this.time++}};let a,f,n,c;v();function v(){n=$("#grid")[0],n.ctx=n.getContext("2d"),c=$("<canvas>")[0],c.ctx=c.getContext("2d");const t=function(){const e=Math.floor($(window).width());$("#width").attr("max",e)};t(),$(window).on("resize",t),$("#create-ca").on("submit",function(e){e.preventDefault(),i();const o=parseInt(e.target.width.value),r=e.target.start.value,d=e.target.boundary.value,h=parseInt(e.target.rule.value);return a=new b(h,o,r,d),$("#automata-name").text("Rule "+h),$("#rule-string").text(h.toString(2).padStart(8,"0")),$(".info").show(),$("#automata").show(),M(),y(),!1});let s=!1,l;$("button#animate").on("click",function(){const e=$("#speed").val();s?(clearInterval(l),$(this).text("Animate")):(l=setInterval(()=>{a.step(),p(),$("#scroll").is(":checked")&&$(window).scrollTop($("#grid").offset().top+$("#grid").height()),n.height>=c.height&&(clearInterval(l),$(this).text("End of Animation").attr("disabled","disabled"))},e*1e3),$(this).text("Stop Animation")),s=!s});const i=()=>{clearInterval(l),s=!1,$("button#animate").text("Animate")};$("button#step").on("click",()=>{i(),a.step(),p()})}function y(){const t=$("#rule-display")[0].getContext("2d"),s=24,l=$("#width").attr("max")*2,i=Math.floor(l/s),e=Math.floor(i*.1),o=5*e;$("#rule-display").attr("width",s*i+s*e+8*o),$("#rule-display").attr("height",i*2+o/2+e/2),t.lineWidth=Math.floor(e/2);let r=1,d=0;for(let h=7;h>=0;h--){t.beginPath(),t.fillStyle=parseInt(a.rule[h])?"black":"white";const w=Math.floor(r*(i*3)+r*(e*3)+r*o-(i*2+e*2));t.rect(w,i+o/2+t.lineWidth/2,i,i),t.fill(),t.stroke();const g=h.toString(2).padStart(3,"0");for(let u=0;u<3;u++){t.beginPath(),t.fillStyle=parseInt(g[u])?"black":"white";const m=u==0?o:0,x=Math.floor(d*i+d*e+(r*o-m)+m);t.rect(x,t.lineWidth/2,i,i),t.fill(),t.stroke(),d++}r++}}function M(){const t=$("#width").val();n.width=Math.floor(t/a.width)*a.width,f=Math.max(Math.floor(n.width/a.width),1),n.height=f,c.width=n.width,c.height=n.height*5e3,p()}function p(){for(let t=0;t<a.width;t++)c.ctx.fillStyle=a.cells[t]?"black":"white",c.ctx.fillRect(f*t,a.time*f,f,f);n.height+=f,n.ctx.drawImage(c,0,0)}</script>
-    <style rel="stylesheet" crossorigin>body{padding:2%;font-size:1.75rem;color:#fff;background-color:#515151}h1{font-size:2.5rem;font-variant:small-caps;text-shadow:2px 2px black}h2{font-size:2rem}#top{margin-top:2rem;display:-webkit-box;display:-ms-flexbox;display:-webkit-flex;display:flex;flex-wrap:wrap;justify-content:space-between;overflow:hidden}#new-automata form#create-ca{width:fit-content;margin:2% 0;padding:20px;color:#000;background-color:#d9d9d9}#new-automata form#create-ca .form-input{margin-bottom:5px}#new-automata form#create-ca label{margin-right:1rem}#new-automata form#create-ca input:not([type=submit]),#new-automata form#create-ca select{float:right}.info{display:none}.info#ca-info h2{margin:0 auto 1rem}.info#ca-info p{margin:0}.info#rule-info{margin:2% 0 5%}.info#rule-info #rule-display{width:calc(100% - 30px);padding:15px;display:block;background-color:#a0a0a0}#automata{display:none}#automata #menu{padding:10px;position:-webkit-sticky;position:sticky;top:0;color:#000;background-color:#d9d9d9}#automata #menu #speed{width:4em}#automata #menu #animate{margin-right:2rem}#automata #menu #step{float:right}#automata #grid{width:100%;display:block;image-rendering:pixelated}</style>
+    <script type="module" crossorigin>(function(){const o=document.createElement("link").relList;if(o&&o.supports&&o.supports("modulepreload"))return;for(const i of document.querySelectorAll('link[rel="modulepreload"]'))l(i);new MutationObserver(i=>{for(const e of i)if(e.type==="childList")for(const r of e.addedNodes)r.tagName==="LINK"&&r.rel==="modulepreload"&&l(r)}).observe(document,{childList:!0,subtree:!0});function n(i){const e={};return i.integrity&&(e.integrity=i.integrity),i.referrerPolicy&&(e.referrerPolicy=i.referrerPolicy),i.crossOrigin==="use-credentials"?e.credentials="include":i.crossOrigin==="anonymous"?e.credentials="omit":e.credentials="same-origin",e}function l(i){if(i.ep)return;i.ep=!0;const e=n(i);fetch(i.href,e)}})();const x=class{constructor(t,o,n,l){this.rule=t.toString(2).padStart(8,"0"),this.time=0,this.boundary=["periodic","fixed","reflexive"].includes(l)?l:"periodic",n=["middle","random"].includes(n)?n:"middle",n==="middle"?(this.cells=[...new Array(o)].map(()=>0),this.cells[Math.floor(o/2)]=1):n==="random"&&(this.cells=[...new Array(o)].map(()=>Math.round(Math.random())))}step(){let t,o;this.boundary=="periodic"?(t=this.cells[this.cells.length-1],o=this.cells[0]):this.boundary=="fixed"?t=o=0:this.boundary=="reflexive"&&(t=this.cells[0],o=this.cells[this.cells.length-1]);let n=[];for(let l=0;l<this.cells.length;l++){const i=this.cells[l-1]??t,e=this.cells[l],r=this.cells[l+1]??o,f=7-parseInt(`${i}${e}${r}`,2);n[l]=parseInt(this.rule[f])}this.cells=n,this.time++}};let s,d,c,a;w();function w(){c=$("#grid")[0],c.ctx=c.getContext("2d",{alpha:!1}),a=$("<canvas>")[0],a.ctx=a.getContext("2d",{alpha:!1});const t=function(){const e=Math.floor($(window).width());$("#width").attr("max",e)};t(),$(window).on("resize",t),$("#create-ca").on("submit",function(e){e.preventDefault(),i();const r=parseInt(e.target.width.value),f=e.target.start.value,m=e.target.boundary.value,h=parseInt(e.target.rule.value);return s=new x(h,r,f,m),$("#automata-name").text("Rule "+h),$("#rule-string").text(h.toString(2).padStart(8,"0")),$("#app-info").hide(),$(".info").show(),$("#automata").show(),v(),b(),!1});let o=!1,n;const l=function(){const e=$("#speed").val();!o&&s?(n=setInterval(()=>{s.step(),p(),$("#scroll").is(":checked")&&$(window).scrollTop($("#grid").offset().top+$("#grid").height())},e*1e3),$(this).text("Stop Animation")):(clearInterval(n),$(this).text("Animate")),o=!o};$("button#animate").on("click",l),$(document).on("keypress",function(e){e.which==97&&s&&$("button#animate").trigger("click")});const i=()=>{clearInterval(n),o=!1,$("button#animate").text("Animate")};$("button#step").on("click",()=>{i(),s.step(),p()})}function b(){const t=$("#rule-display")[0];t.ctx=t.getContext("2d");const o=24,n=$("#width").attr("max")*2,l=Math.floor(n/o),i=Math.floor(l*.1),e=5*i;t.width=o*l+o*i+8*e,t.height=l*2+e/2+i/2,t.ctx.lineWidth=Math.floor(i/2);let r=e;const f=Math.floor(t.ctx.lineWidth/2),m=f+Math.floor(l+e/2);for(let h=7;h>=0;h--){const g=h.toString(2).padStart(3,"0");for(let u=0;u<3;u++)t.ctx.beginPath(),t.ctx.fillStyle=parseInt(g[u])?"black":"white",t.ctx.rect(r,f,l,l),t.ctx.fill(),t.ctx.stroke(),u==1&&(t.ctx.beginPath(),t.ctx.fillStyle=parseInt(s.rule[7-h])?"black":"white",t.ctx.rect(r,m,l,l),t.ctx.fill(),t.ctx.stroke()),r+=l+i;r+=e}}function v(){const t=$("#width").attr("max");c.width=Math.max(Math.floor(t/s.cells.length)*s.cells.length,500),d=Math.max(Math.floor(c.width/s.cells.length),1),c.height=0,a.width=c.width,a.height=c.height,p()}function p(){a.height+=d,s.time!=0&&a.ctx.drawImage(c,0,0);for(let t=0;t<s.cells.length;t++)a.ctx.fillStyle=s.cells[t]?"black":"white",a.ctx.fillRect(d*t,s.time*d,d,d);c.height+=d,c.ctx.drawImage(a,0,0)}</script>
+    <style rel="stylesheet" crossorigin>body{padding:2%;font-size:1.75rem;color:#fff;background-color:#515151}h1{font-size:2.5rem;font-variant:small-caps;text-shadow:2px 2px black}h2{font-size:2rem}#top{margin-top:2rem;display:-webkit-box;display:-ms-flexbox;display:-webkit-flex;display:flex;flex-wrap:wrap;align-items:center;gap:5vw;overflow:hidden}#top h2{margin:0 auto 1rem}#top p{margin:0}#new-automata form#create-ca{width:fit-content;margin:2% 0;padding:20px;color:#000;background-color:#d9d9d9}#new-automata form#create-ca .form-input{margin-bottom:5px}#new-automata form#create-ca label{margin-right:1rem}#new-automata form#create-ca input:not([type=submit]),#new-automata form#create-ca select{float:right}.info{display:none}.info#rule-info{margin:2% 0 5%}.info#rule-info #rule-display{width:calc(100% - 30px);padding:15px;display:block;background-color:#a0a0a0}#automata{display:none}#automata #menu{padding:10px;position:-webkit-sticky;position:sticky;top:0;color:#000;background-color:#d9d9d9}#automata #menu #speed{width:4em}#automata #menu #animate{margin-right:2rem}#automata #menu #step{float:right}#automata #grid{width:100%;display:block;image-rendering:smooth}</style>
   </head>
   <body>
     <h1>Elementary Cellular Automata Visualizer</h1>
     <hr />
 
     <div id="top">
-      <div id="ca-info" class="info">
-        <h2 id="automata-title">Current Automata: <span id="automata-name"></span></h2>
-        <p><i>Step:</i> run rule on each cell once</p>
-        <p><i>Animate:</i> step continuously</p>
-        <p><i>Speed:</i> how often to animate (in seconds)</p>
-        <p><i>Auto scroll:</i> automatically scroll when animating</p>
-        <br/>
-      </div>
-
       <!-- Create a new cellular automata -->
       <div id="new-automata">
         <span>Create New Automata:</span>
         <form id="create-ca">
           <div class="form-input">
             <label for="rule">Rule:</label>
-            <input id="rule" name="rule" type="number" min="0" max="255" step="1" placeholder="90" required>
+            <input id="rule" name="rule" type="number" min="0" max="255" step="1" required>
           </div>
           <div class="form-input">
             <label for="width">Lattice width:</label>
@@ -53,10 +44,26 @@
           <input id="create" type="submit" value="Create Automatata" />
         </form>
       </div>
+
+      <!-- Instructions -->
+      <div id="app-info">
+        <p><i>Rule:</i> Wolfram code number from 0-255</p>
+        <p><i>Lattice width:</i> number of cells to use</p>
+        <p><i>Start states:</i> initial configuration</p>
+        <p><i>Boundary:</i> state at boundaries</p>
       </div>
+      <div id="ca-info" class="info">
+        <h2 id="automata-title">Current Automata: <span id="automata-name"></span></h2>
+        <p><i>Step:</i> run rule on each cell once</p>
+        <p><i>Animate:</i> step continuously (press 'a')</p>
+        <p><i>Speed:</i> how often to animate (in seconds)</p>
+        <p><i>Auto scroll:</i> scroll when animating</p>
+        <br/>
+      </div>
+    </div>
 
     <div id="rule-info" class="info">
-      Rule: <span id="rule-string"></span>
+      Rulestring: <span id="rule-string"></span>
       <canvas id="rule-display"></canvas>
     </div>
 
